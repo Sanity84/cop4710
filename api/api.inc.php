@@ -177,6 +177,40 @@ class Api {
 		return $this->OK;
 	}
 
+	public function createUserUniversity($session_key, $university) {
+		// Sanitize
+		$university['id'] = (int)$university['id'];
+		$session_key = $this->db->real_escape_string($session_key);
+
+		// Verify session
+		$query = sprintf("SELECT S.userid FROM sessions S WHERE S.session='%s' AND S.expire>NOW() LIMIT 1", $session_key);
+		$result = $this->db->query($query);
+		if($result->num_rows < 1) {
+			$this->ERROR['data']['message'] = 'Invalid or expired session';
+			return $this->ERROR;
+		}
+		$row = $result->fetch_assoc();
+
+		// Validate that university exists
+		$query = sprintf("SELECT * FROM universities UV WHERE UV.id=%d LIMIT 1", $university['id']);
+		$result = $this->db->query($query);
+		if($result->num_rows < 1) {
+			$this->ERROR['data']['message'] = 'University does not exist';
+			return $this->ERROR;
+		}
+		$university = $result->fetch_assoc();
+
+		// Insert association with user and university
+		$query = sprintf("INSERT INTO university_users (universityid, userid) VALUES (%d, %d)", $university['id'], $row['userid']);
+		if(!$this->db->query($query)) {
+			$this->ERROR['data']['message'] = 'Could not save university user data';
+			return $this->ERROR;
+		}
+		
+		$this->OK['data'] = $university;
+		return $this->OK;
+	}
+
 	public function getSession($session_key) {
 		$session_key = $this->db->real_escape_string($session_key);
 		$query = sprintf("SELECT S.userid FROM sessions S WHERE S.session='%s' AND S.expire>NOW() LIMIT 1", $session_key);
@@ -254,7 +288,7 @@ class Api {
 	}
 
 	public function getUniversities() {
-		$query = sprintf("SELECT UV.id, UV.name, UV.location FROM universities UV");
+		$query = sprintf("SELECT UV.id, UV.name, UV.location, UV.description FROM universities UV");
 		$result = $this->db->query($query);
 		$universities = array();
 		while($row = $result->fetch_assoc())

@@ -50,6 +50,10 @@
 		return $resource('api/university/:id');
 	}]);
 
+	app.factory('UCFPublicEvents', ['$resource', function($resource) {
+		return $resource('http://events.ucf.edu/feed.json');
+	}]);
+
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {
 			if(exdays !== null) {
@@ -73,6 +77,12 @@
 					return c.substring(name.length,c.length);
 			}
 			return "";
+		};
+	});
+
+	app.filter('unsafe', function($sce) {
+		return function(val) {
+			return $sce.trustAsHtml(val);
 		};
 	});
 

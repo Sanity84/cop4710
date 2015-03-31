@@ -1,15 +1,23 @@
 <div class="row">
+	<div class="col-sm-12">
+		<!-- <h1 style="margin-top: 0;">Featured University</h1> -->
+	</div>
 	<div class="col-sm-6">
 		<img src="http://knightnews.com/wp-content/uploads/2012/02/ucf-med-school.jpg" alt="UCF" class="img img-responsive">	
 	</div>
 	<div class="col-sm-6">
-		<h2>University of Central Florida</h2>
-		<p><strong>Description: </strong>UCF is a university. Go Knights!</p>
-		<p><strong>Location: </strong>Orlando, FL</p>
+		<h2>{{ featured.university.name }}</h2>
+		<p><strong>Description: </strong><br>{{ featured.university.description }}</p>
+		<p><strong>Location: </strong><br>{{ featured.university.location }}</p>
+		<p><strong>President: </strong><br>{{ featured.administrator.firstname + featured.administrator.lastname }}</p>
+		<p class="lead">TODO: use images array to populate a image slideshow on the left</p>
+
 	</div>
 </div>
+<h2>Universities</h2>
 <ul class="list-group">
-	<li class="list-group-item">
-		List universities here
+	<li class="list-group-item" ng-repeat="university in universities">
+		<p class="lead">{{ university.name }}</p>
+		<p>{{ university.description }}</p>
 	</li>
 </ul>

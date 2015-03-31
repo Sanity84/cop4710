@@ -31,6 +31,7 @@
 		$scope.create = function() {
 			User.resource().save($scope.register, function(data) {
 				if(data.status == 200) {
+					Session.destroy(); // Clear out any old data
 					$scope.createError = false;
 					Session.create(data.data);
 					Cookie.put('Session', Session.session, null);
@@ -57,6 +58,7 @@
 		$scope.login = function() {
 			User.resource($scope.l.username, $scope.l.password).login({}, function(data) {
 				if(data.status == 200) {
+					Session.destroy(); // Clear out any old data
 					$scope.loginError = false;
 					$scope.loggedin = true;
 					Session.create(data.data);
@@ -86,16 +88,27 @@
 		};
 	}]);
 
-	app.controller('UniversityController', ['$scope', 'Session', function($scope, Session) {
-		
+	app.controller('UniversityController', ['$scope', 'University', function($scope, University) {
+		University.get({id: 2}, function(data) {
+			$scope.featured = data.data;
+		});
+
+		University.query(function(data) {
+			$scope.universities = data;
+		});
 	}]);
 
 	app.controller('RsoController', ['$scope', function($scope) {
 
 	}]);
 
-	app.controller('EventController', ['$scope', function($scope) {
+	app.controller('EventController', ['$scope', 'UCFPublicEvents', function($scope, UCFPublicEvents) {
+		UCFPublicEvents.query(function(data) {
+			$scope.events = data;
+		});
 
+		// USF Event feed
+		// http://calendars.usf.edu/webcache/v1.0/jsonDays/7/list-json/no--filter/no--object.json
 	}]);
 
 	app.controller('AdminHomepageController', ['$scope', 'Session', 'UserUniversity', 'University', function($scope, Session, UserUniversity, University) {
@@ -125,12 +138,43 @@
 		};
 	}]);
 
-	app.controller('StudentHomepageController', ['$scope', 'Test', function($scope, Test) {
-		$scope.test = function() {
-			Test.get({}, function(data) {
-				$scope.result = data;
-			});
+	app.controller('StudentHomepageController', ['$scope', 'Test', 'University', 'UserUniversity', function($scope, Test, University, UserUniversity) {
+		// $scope.test = function() {
+		// 	Test.get({}, function(data) {
+		// 		$scope.result = data;
+		// 	});
+		// };
+		$scope.noSchool = true;
+		UserUniversity.get({}, function(data) {
+			if(data.status == 200) {
+				$scope.noSchool = false;
+				$scope.homeSchool = data.data.university;
+			}
+		});
+
+		University.query(function(data) {
+			$scope.universities = data;
+			$scope.school = $scope.universities[0];
+		});
+
+		$scope.school = {};
+
+		$scope.joinSchool = function() {
+			if($scope.noSchool)
+				UserUniversity.save($scope.school, function(data) {
+					console.log(data);
+					if(data.status == 200) {
+						$scope.errorMessage = false;
+						$scope.noSchool = false;
+						// this returns the school
+						$scope.homeSchool = data.data;
+					}else{
+						$scope.errorMessage = data.data.message;
+					}
+
+				});
 		};
+
 	}]);
 
 })();

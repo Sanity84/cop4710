@@ -34,6 +34,14 @@ $app->get('/user/university', function() use ($app) {
 	echo json_encode($api->getUserUniversity($session_key), JSON_PRETTY_PRINT);
 });
 
+// Save userUniversity
+$app->post('/user/university', function() use ($app) {
+	$api = new Api();
+	$session_key = $app->getCookie('session');
+	$university = json_decode($app->request->getBody(), true);
+	echo json_encode($api->createUserUniversity($session_key, $university), JSON_PRETTY_PRINT);
+});
+
 
 $app->get('/session', function() use ($app) {
 	$api = new Api();

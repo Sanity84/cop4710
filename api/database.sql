@@ -139,3 +139,14 @@ CREATE TABLE rsorequest_users (
 	PRIMARY KEY (`rsorequest`, `userid`)
 );
 
+CREATE TABLE sessions (
+	`id` int(11) auto_increment,
+	`session` varchar(255) NOT NULL,
+	`created` timestamp DEFAULT CURRENT_TIMESTAMP,
+	`expire` datetime NOT NULL,
+	`userid` int(11) NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY (`session`),
+	FOREIGN KEY (`userid`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
