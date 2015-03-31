@@ -1,0 +1,21 @@
+html, body{
+	height: 100%;
+}
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin-bottom: -120px;
+}
+.push, .footer {
+	height: 120px;
+}
+.footer {
+	background-color: #e7e7e7; 
+}
+.footer p {
+	line-height: 120px; 
+	margin: 0; 
+	padding-left: 40px; 
+	color: #777;
+}

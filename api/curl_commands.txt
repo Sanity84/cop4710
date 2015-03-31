@@ -1,0 +1,9 @@
+# Create new user
+curl -v -H "Content-Type: application/json" -X POST -d '{"firstname": "andrew", "lastname": "torrez", "username": "drew", "password": "password", "email": "drew@knights.ucf.edu", "role": "student" }' http://localhost/collegeevent/api/user
+
+# Validate user (for keeping state in client)
+# NOTE: this uses Basic authentication with the header as: "Authentication: Basic username:password" where username:password is converted to base64
+curl -v -u 'sanity:password' -H "Content-Type: application/json" http://localhost/collegeevent/api/user
+
+# Admin create new university
+curl -v -u 'sanity:password' -H "Content-Type: application/json" -d '{"name": "University of Central Florida", "location": "Orlando FL", "description": "Go Knights! And stuff."}' http://localhost/collegeevent/api/university
