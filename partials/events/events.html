@@ -1,0 +1,31 @@
+<div class="row">
+	<div class="col-sm-8">
+		<p class="lead">Events</p>
+	</div>
+	<div class="col-sm-4">
+		<p class="lead">Filter Events</p>
+		<form class="form">
+			<div class="form-group" ng-submit="updateFilter(filter)">
+				<label for="university" class="label-control">University</label>
+				<!-- <div class="col-sm-12"> -->
+					<select id="role" ng-model="filter.university" class="form-control" ng-options="university.name for university in universities">
+					</select>
+				<!-- </div> -->
+			</div>
+		</form>
+	</div>
+</div>
+<div class="row">
+	<ul class="list-group">
+		<li class="list-group-item" ng-repeat="event in events">
+			<p class="lead"><a ng-href="{{ event.url }}" target="_blank">{{ event.title }}</a></p>
+			<p ng-bind-html="event.description | unsafe"></p>
+			<p><strong>Location</strong> <a ng-href="{{ event.location_url }}" target="_blank">{{ event.location }}</a><br>
+			<strong>Contact</strong> 
+			<strong>Name:</strong> {{ event.contact_name }} 
+			<strong>Phone:</strong> {{ event.contact_phone }} 
+			<strong>Email:</strong> {{ event.contact_email }}
+			</p>
+		</li>
+	</ul>
+</div>

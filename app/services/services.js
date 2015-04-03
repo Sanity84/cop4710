@@ -1,8 +1,9 @@
 (function(){
-	var app = angular.module('cnt4710.services', ['ngResource', 'base64', 'ngStorage']);
+	var app = angular.module('App.Services', ['ngResource', 'base64', 'ngStorage']);
 
 	app.service('Session', ['$sessionStorage', '$location', 'Cookie', function($sessionStorage, $location, Cookie) {
 		this.create = function(data) {
+			Cookie.put('session', data.session, null); // Only session as long as user doesn't close browser
 			$sessionStorage.role = data.role;
 			this.session = data.session;
 			this.role = data.role;

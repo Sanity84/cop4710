@@ -164,7 +164,7 @@ class Api {
 		unset($administrator['password']);
 
 		// Get images
-		$query = sprintf("SELECT I.name, I.path FROM images I, image_universities IU WHERE IU.imageid=I.id AND IU.universityid=%d", (int)$id);
+		$query = sprintf("SELECT I.name, I.path FROM images I, image_universities IU WHERE IU.imageid=I.id AND IU.universityid=%d", $university['id']);
 		$results = $this->db->query($query);
 		$images = array();
 		while($row = $results->fetch_assoc())
@@ -206,7 +206,7 @@ class Api {
 			$this->ERROR['data']['message'] = 'Could not save university user data';
 			return $this->ERROR;
 		}
-		
+
 		$this->OK['data'] = $university;
 		return $this->OK;
 	}
