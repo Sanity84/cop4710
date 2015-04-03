@@ -4,11 +4,13 @@ require 'api.inc.php';
 
 $app = new \Slim\Slim();
 $app->contentType('application/json');
+// $app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost');
+header('Access-Control-Allow-Origin: *');
+header('Vary: Accept-Encoding');
 
-
-$app->get('/test', function() use ($app) {
-	$foo = $app->getCookie('session');
-	echo json_encode(array('session' => $foo), JSON_PRETTY_PRINT);
+$app->get('/getAllUsers', function() use ($app) {
+	$api = new Api();
+	echo json_encode($api->getAllUsers(), JSON_PRETTY_PRINT);
 });
 
 
@@ -71,6 +73,19 @@ $app->get('/university(/:id)', function($id = null) use ($app) {
 		echo json_encode($api->getUniversities(), JSON_PRETTY_PRINT);
 	else
 		echo json_encode($api->getUniversity($id), JSON_PRETTY_PRINT);
+});
+
+$app->post('/rsorequest', function() use ($app) {
+	$api = new Api();
+	$rso = json_decode($app->request->getBody(), true);
+	$session_key = $app->getCookie('session');
+	echo json_encode($api->createRsoRequest($rso, $session_key), JSON_PRETTY_PRINT);
+});
+
+$app->get('/rsorequest', function() use ($app) {
+	$api = new Api();
+	$session_key = $app->getCookie('session');
+	echo json_encode($api->getRsoRequests($session_key), JSON_PRETTY_PRINT);
 });
 
 $app->run();

@@ -31,24 +31,24 @@
 			restrict: 'E',
 			templateUrl: 'partials/app/login.html',
 			controller: function($scope, User, Session, $location) {
-				$scope.login = function() {
-					User.resource($scope.l.username, $scope.l.password).login({}, function(data) {
+				$scope.login = function(loginUser) {
+					User.resource(loginUser.username, loginUser.password).login({}, function(data) {
 						if(data.status == 200) {
 							Session.destroy(); // Clear out any old data
-							$scope.loginError = false;
 							$scope.loggedin = true;
 							Session.create(data.data);
-							$scope.l = {};
+							$scope.loginUser = {};
 							$scope.firstname = Session.firstname;
+							$scope.errorMessage = false;
 							// Redirect user to respective page
 							switch(Session.role) {
 								case 'admin': $scope.homepage = 'adminHomepage'; $location.url('/adminHomepage'); break;
+								case 'leader': $scope.homepage = 'leaderHomepage'; $location.url('/leaderHomepage'); break;
 								case 'student': $scope.homepage = 'studentHomepage'; $location.url('/studentHomepage'); break;
 								default: $location.url('/university'); break;
 							}
 						}else{
 							$scope.loggedin = false;
-							$scope.loginError = true;
 							$scope.errorMessage = data.data.message;
 						}
 					});

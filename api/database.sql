@@ -20,7 +20,9 @@ CREATE TABLE universities (
 	`location` varchar(255) NOT NULL,
 	`userid` int(11) NOT NULL,
 	`description` text,
+	`email_domain` varchar(30) NOT NULL,
 	PRIMARY KEY (`id`),
+	UNIQUE (`email_domain`),
 	FOREIGN KEY (`userid`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
@@ -47,6 +49,8 @@ CREATE TABLE events (
 	`contactphone` varchar(20),
 	`contactemail` varchar(60),
 	`rsoid` int(11) NOT NULL,
+	`lat` real NOT NULL,
+	`lng` real NOT NULL,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`rsoid`) REFERENCES `rsos`(`id`)
 );
@@ -123,20 +127,24 @@ CREATE TABLE rso_users (
 	FOREIGN KEY (`userid`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE rsorequest (
+CREATE TABLE rsorequests (
 	`id` int(11) auto_increment,
 	`name` varchar(255),
 	`created` timestamp DEFAULT CURRENT_TIMESTAMP,
 	`universityid` int(11) NOT NULL,
+	`type` varchar(30) NOT NULL,
+	`description` text,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`universityid`) REFERENCES `universities`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE rsorequest_users (
-	`rsorequest` int(11) NOT NULL,
+	`rsorequestid` int(11) NOT NULL,
 	`userid` int(11) NOT NULL,
 	`leader` boolean DEFAULT 0,
-	PRIMARY KEY (`rsorequest`, `userid`)
+	PRIMARY KEY (`rsorequest`, `userid`),
+	FOREIGN KEY (`rsorequestid`) REFERENCES `rsorequests`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`userid`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE sessions (
