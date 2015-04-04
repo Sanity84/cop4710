@@ -73,7 +73,7 @@ class Api {
 		$query = sprintf("SELECT U.id FROM users U WHERE U.username='%s' LIMIT 1", $credentials['username']);
 		$result = $this->db->query($query);
 		if($result->num_rows > 0) {
-			$this->ERROR['data']['message'] = 'Usernamem already exists';
+			$this->ERROR['data']['message'] = 'Username already exists';
 			return $this->ERROR;
 		}
 		// Check if email is already in use

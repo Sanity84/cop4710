@@ -1,0 +1,36 @@
+<p class="lead">User List</p>
+<p><strong>This list is for testing purposes</strong><br>
+All passwords are 'password' unless you created someone with a different one!</p>
+<div class="row">
+	<div class="col-sm-4">
+		<p class="lead">Admins</p>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="admin in admins">
+				{{ admin.username }}<br>
+				{{ admin.email }}<br>
+				<strong>{{ admin.university }}</strong>
+			</li>
+		</ul>
+	</div>
+	<div class="col-sm-4">
+		<p class="lead">RSO Leaders</p>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="leader in leaders">
+				{{ leader.username }}<br>
+				{{ leader.rso }}<br>
+				{{ leader.email }}<br>
+				<strong>{{ leader.university }}</strong>
+			</li>
+		</ul>
+	</div>
+	<div class="col-sm-4">
+		<p class="lead">Students</p>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="student in students">
+				{{ student.username }}<br>
+				{{ student.email }}<br>
+				<strong>{{ student.university }}</strong>
+			</li>
+		</ul>
+	</div>
+</div>

@@ -3,35 +3,71 @@
 
 	app.config(['$routeProvider', function($routeProvider) {
 
+		// Used to preload session data on refreshes and browser window closes
+		// NOTE: must resolve to either true or false, reject will block the view from displaying!
+		var authorized = function($rootScope, $q, Session, Cookie, SessionAPI) {
+			var deferred = $q.defer();
+			if($rootScope.loggedin) {
+				// User is already logged in, we don't need to refresh data or anything!
+				deferred.resolve(true);
+
+			}else if(Cookie.get('session')) {
+
+				SessionAPI.get(function(response) {
+					if(response.status == 200) {
+						Session.create(response.data);
+						deferred.resolve(true);
+						console.log('Refreshing user data');
+					}else{
+						console.log('Key no longer valid');
+						Session.destroy();
+						deferred.resolve(false);
+					}
+				});
+			}else{
+				console.log('no cookie!');
+				deferred.resolve(false);
+			}
+			return deferred.promise;
+		};
+
+		// All pages get authorized because we want data on everypage!, if something must be restricted place it
+		// in the if(authorized) {} block in the controller
 		// Routing routes
 		$routeProvider.when('/events',{
 			templateUrl: 'partials/events/events.html',
-			controller: 'EventsController'
+			controller: 'EventsController',
+			resolve: {
+				authorized: authorized
+			}
 		}).when('/adminHomepage',{
 			templateUrl: 'partials/admin/homepage.html',
-			controller: 'AdminHomepageController'
+			controller: 'AdminHomepageController',
+			resolve: {
+				authorized: authorized
+			}
 		}).when('/leaderHomepage', {
 			templateUrl: 'partials/leader/homepage.html',
-			controller: 'LeaderHomepageController'
+			controller: 'LeaderHomepageController',
+			resolve: {
+				authorized: authorized
+			}
 		}).when('/studentHomepage',{
 			templateUrl: 'partials/student/homepage.html',
-			controller: 'StudentHomepageController'
+			controller: 'StudentHomepageController',
+			resolve: {
+				authorized: authorized
+			}
+		}).when('/listUsers', {
+			templateUrl: 'partials/listUsers.html',
+			controller: 'ListUsersController',
+			resolve: {
+				authorized: authorized
+			}
 		}).otherwise({
 			redirectTo: '/events'
 		});
 
 	}]);
 
-	app.run(['$rootScope', '$location', '$sessionStorage', function($rootScope, $location, $sessionStorage) {
-		// console.log($sessionStorage.role);
-		// // This is used for restricting certain parts of the website, with the proper role users can access certain webpages
-		// $rootScope.$on('$routeChangeStart', function(event, next) {
-		// 	var role = $sessionStorage.role;
-		// 	if(next.restrict)
-		// 		if (!role)
-		// 			$location.url('/university');
-		// 		else if(next.restrict.indexOf(role) < 0)
-		// 			event.preventDefault();
-		// });
-	}]);
 })();

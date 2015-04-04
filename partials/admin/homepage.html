@@ -1,68 +1,12 @@
-<div class="alert alert-danger" ng-show="haveError">{{ errorMessage }}</div>
-<div class="row">
-	<div class="col-sm-8">
-		<!-- University data / add images -->
-		<h2>University</h2>
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<!-- Show when a university is already associated with this admin -->
-				<div ng-show="haveUniversity">
-					<h2>{{ university.name }}</h2>
-					<p><strong>Location: </strong> {{ university.location }}</p>
-					<p><strong>Description: </strong>{{ university.description }}</p>
-					<h3>University Images </h3>
-					<form ng-submit="addImage()" class="form-horizontal" role="form">
-						<!-- <div class="form-group"> -->
-						<div class="row">
-							<div class="col-sm-3">
-								<input ng-model="img.name" class="form-control" type="text" placeholder="Image name">
-							</div>
-							<div class="col-sm-7">
-								<input ng-model="img.url" class="form-control" type="text" placeholder="Image url">
-							</div>
-							<div class="col-sm-2">
-								<input class="btn btn-primary" type="submit" value="Add">
-							</div>
-						</div>
-						<!-- </div> -->
-					</form>
-					<div class="clearfix"></div>
-					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="image in images">{{ image.name }}: <a ng-href="{{ image.path }}" target="_BLANK">{{ image.path }}</a></li>
-					</ul>
-				</div>
-				<!-- Show when an admin hasn't created a university yet -->
-				<div ng-hide="haveUniversity">
-					<form ng-submit="create()" class="form-horizontal">
-						<div class="form-group">
-							<div class="col-sm-12">
-								<input class="form-control" ng-model="university.name" type="text" placeholder="University Name" required>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-12">
-								<input class="form-control" ng-model="university.location" type="text" placeholder="University Location" required>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-12">
-								<textarea class="form-control" rows="6" ng-model="university.description" placeholder="University Description" required></textarea>
-							</div>
-						</div>
-						<input class="btn btn-primary pull-right" type="submit" value="Save">
-						<div class="clearfix"></div>
-					</form>
-				</div>	
-			</div>
-		</div>	
+<h1>Welcome, {{ firstname }}</h1>
+<div class="row" ng-show="noProfile">
+	<div class="col-sm-12">
+		<create-profile></create-profile>
 	</div>
-	<div class="col-sm-4">
-		<!-- RSO Requests made by students -->
-		<h2>RSO Requests</h2>
-		<div class="panel panel-default">
-			<div class="panel-body">
-				Stuff
-			</div>
-		</div>
-	</div>
+</div>
+<div class="row" ng-hide="noProfile">
+	<h2>{{ university.name }}</h2>
+	<p><strong>Description</strong><br>{{ university.description }}</p>
+	<p><strong>Location</strong><br>{{ university.location }}</p>
+	<hr>
 </div>

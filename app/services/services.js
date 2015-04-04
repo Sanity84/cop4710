@@ -1,17 +1,27 @@
 (function(){
 	var app = angular.module('App.Services', ['ngResource', 'base64', 'ngStorage']);
 
-	app.service('Session', ['$sessionStorage', '$location', 'Cookie', function($sessionStorage, $location, Cookie) {
+	app.service('Session', ['$rootScope', '$sessionStorage', 'Cookie', 'SessionAPI', function($rootScope, $sessionStorage, Cookie, SessionAPI) {
 		this.create = function(data) {
+			$rootScope.loggedin = true;
+			$rootScope.firstname = data.firstname;
 			Cookie.put('session', data.session, null); // Only session as long as user doesn't close browser
-			$sessionStorage.role = data.role;
+			// $sessionStorage.role = data.role;
 			this.session = data.session;
 			this.role = data.role;
 			this.firstname = data.firstname;
+			switch(data.role) {
+				case 'admin': $rootScope.homepage = 'adminHomepage'; break;
+				case 'leader': $rootScope.homepage = 'leaderHomepage'; break;
+				case 'student': $rootScope.homepage = 'studentHomepage'; break;
+				default: break;
+			}
 		};
 
 		this.destroy = function() {
-			delete $sessionStorage.role;
+			$rootScope.loggedin = false;
+			$rootScope.firstname = false;
+			// delete $sessionStorage.role;
 			this.session = null;
 			this.role = null;
 			this.firstname = null;
@@ -19,6 +29,7 @@
 		};
 
 	}]);
+
 
 	app.factory('User', ['$resource', '$base64', function($resource, $base64) {
 		return {
@@ -53,6 +64,10 @@
 
 	app.factory('UCFPublicEvents', ['$resource', function($resource) {
 		return $resource('http://events.ucf.edu/feed.json');
+	}]);
+
+	app.factory('GetAllUsers', ['$resource', function($resource) {
+		return $resource('api/getAllUsers');
 	}]);
 
 	app.service('Cookie', function() {
