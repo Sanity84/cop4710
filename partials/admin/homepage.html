@@ -1,12 +1,14 @@
 <h1>Welcome, {{ firstname }}</h1>
+<hr>
 <div class="row" ng-show="noProfile">
 	<div class="col-sm-12">
 		<create-profile></create-profile>
 	</div>
 </div>
 <div class="row" ng-hide="noProfile">
-	<h2>{{ university.name }}</h2>
-	<p><strong>Description</strong><br>{{ university.description }}</p>
-	<p><strong>Location</strong><br>{{ university.location }}</p>
-	<hr>
+	<div class="col-sm-12">
+		<div ng-show="rsorequests">
+			<rsorequests></rsorequests>
+		</div>
+	</div>
 </div>

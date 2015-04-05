@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+	<div class="panel-body">
+		<p class="lead">Join RSO</p>
+		<form class="form" ng-submit="selectRSO(rso)">
+			<div class="form-group">
+				<label for="rsoname" class="label-control">RSOs</label>
+				<select class="form-control" id="rsoname" ng-model="rso.name">
+					<option value="dummy">Dummy RSO</option>
+				</select>
+			</div>
+			<p><strong>About</strong><br>
+				Words and things about the rso you selected. There is pizza and games and event stuff.
+			</p>
+			<input type="submit" value="Join" class="btn btn-primary btn-block">
+		</form>
+	</div>
+</div>

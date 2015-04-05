@@ -1,0 +1,29 @@
+<p class="lead">New RSO Requests</p>
+<div class="col-sm-4" ng-repeat="request in rsorequests">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<p class="lead">{{ request.name }}</p>
+			<p>
+				<strong>Description: </strong><br>{{ request.description }}<br><br>
+				<strong>Type: </strong><br>{{ request.type }}<br>
+			</p>
+		</div>
+		<table class="table">
+			<tr>
+				<th>Members</th>
+			</tr>
+			<tr ng-repeat="member in request.members">
+				<td>{{ member.name }} <strong ng-show="member.leader == 1">Leader</strong></td>
+			</tr>
+		</table>
+		<div class="panel-footer">
+			<div class="col-sm-6">
+				<button ng-click="accept(request.id)" class="btn btn-success btn-block">Accept</button>
+			</div>
+			<div class="col-sm-6">
+				<button ng-click="reject(request.id)" class="btn btn-danger btn-block">Reject</button>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+</div>

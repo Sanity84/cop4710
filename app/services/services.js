@@ -70,6 +70,14 @@
 		return $resource('api/getAllUsers');
 	}]);
 
+	app.factory('RsoRequest', ['$resource', function($resource) {
+		return $resource('api/rsorequest');
+	}]);
+
+	app.factory('Rso', ['$resource', function($resource) {
+		return $resource('api/rso');
+	}]);
+
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {
 			if(exdays !== null) {

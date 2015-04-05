@@ -32,7 +32,7 @@ class Api {
 		while($row = $results->fetch_assoc())
 			$students[] = $row;
 		// Get leaders
-		$query = "SELECT U.username, U.email, UV.name university FROM users U, universities UV, university_users UU WHERE UU.universityid=UV.id AND U.id=UU.userid AND U.role='leader'";
+		$query = "SELECT U.username, U.email, UV.name university, R.name rso FROM users U, universities UV, university_users UU, rsos R WHERE UU.universityid=UV.id AND U.id=UU.userid AND U.role='leader' AND R.leaderid=U.id";
 		$results = $this->db->query($query);
 		$leaders = array();
 		while($row = $results->fetch_assoc())
@@ -478,6 +478,83 @@ class Api {
 			$rsorequests[$row['rsorequestid']]['members'][] = $row;
 		
 		$this->OK['data'] = $rsorequests;
+		return $this->OK;
+	}
+
+	public function createRso($session_key, $rso) {
+		
+		if(!$session_key) { $this->NOAUTH['data']['message'] = 'Not authorized'; return $this->NOAUTH; }
+		$session_key = $this->db->real_escape_string($session_key);
+		if(!$rso['id']) { $this->ERROR['data']['message'] = 'Missing rsorequest id'; return $this->ERROR; }
+		$rso['id'] = (int)$rso['id'];
+		$rsoid = $rso['id'];
+		$query = sprintf("SELECT U.role FROM sessions S LEFT OUTER JOIN users U ON U.id=S.userid WHERE S.session='%s' AND S.expire>NOW() LIMIT 1", $session_key);
+		$result = $this->db->query($query);
+		if($result->num_rows < 1) {
+			$this->NOAUTH['data']['message'] = 'Not authorized';
+			return $this->NOAUTH;
+		}
+
+		// Get RSO information from rso id
+		$query = sprintf("SELECT * FROM rsorequests RR WHERE RR.id=%d LIMIT 1", $rso['id']);
+		$result = $this->db->query($query);
+		if($result->num_rows < 1) {
+			$this->ERROR['data']['message'] = 'Cannot find rsorequest id';
+			return $this->ERROR;
+		}
+		$rso = $result->fetch_assoc();
+
+		// Get all users for this query
+		$query = sprintf("SELECT * from rsorequest_users RRU WHERE RRU.rsorequestid=%d", $rso['id']);
+		$results = $this->db->query($query);
+		$members = array();
+		$leader = null;
+		while($row = $results->fetch_assoc()) {
+			if($row['leader'] == 1) {
+				$leader = $row;
+				continue;
+			}else{
+				$members[] = $row;
+			}
+		}
+
+		// Insert all data from places
+		$multi_query = sprintf("START TRANSACTION;"
+		."INSERT INTO rsos (universityid, description, name, type, leaderid) VALUES (%d, '%s', '%s', '%s', %d);"
+		."SET @rsoid = LAST_INSERT_ID();"
+		."INSERT INTO rso_users (rsoid, userid) VALUES (@rsoid, %d), (@rsoid, %d), (@rsoid, %d), (@rsoid, %d), (@rsoid, %d), (@rsoid, %d);"
+		."COMMIT",
+		$rso['universityid'], $rso['description'], $rso['name'], $rso['type'], $leader['userid'],
+		$leader['userid'], $members[0]['userid'], $members[1]['userid'], $members[2]['userid'], $members[3]['userid'],
+		$members[4]['userid']);
+		$result = $this->db->multi_query($multi_query);
+		if(!$result) {
+			$this->ERROR['data']['message'] = 'Problem Saving RSO';
+			return $this->ERROR;
+		}
+
+		// Clear out memory and stuff
+		while($this->db->more_results()) {
+		    $this->db->next_result();
+		    if($res = $this->db->store_result()) {
+		        $res->free(); 
+		    }
+		}
+		// This isn't deleting correctly
+		$query = sprintf("DELETE FROM rsorequests WHERE id=%d", $rsoid);
+		if(!$this->db->query($query)){
+			$this->ERROR['data']['message'] = 'Something wrong with deletion';
+			$this->ERROR['data']['error'] = $this->db->error;
+			return $this->ERROR;
+		}
+		// $query = sprintf("DELETE FROM rsorequest_users WHERE rsorequestid=%d", $rsoid);
+		// $this->db->query($query);
+
+		// Also promote student to leader
+		$query = sprintf("UPDATE users SET role='leader' WHERE id=%d", (int)$leader['userid']);
+		$this->db->query($query);
+
+		$this->OK['data']['message'] = 'RSO saved successfully';
 		return $this->OK;
 	}
 

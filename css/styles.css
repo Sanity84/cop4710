@@ -1,5 +1,7 @@
 html, body{
 	height: 100%;
+	background-image: url('../images/pattern-a3ye.png');
+	background-repeat: repeat;
 }
 .wrapper {
 	min-height: 100%;
@@ -11,11 +13,22 @@ html, body{
 	height: 120px;
 }
 .footer {
-	background-color: #e7e7e7; 
+	/*background-color: #e7e7e7; */
+	background-color: #3e3f3a; 
 }
 .footer p {
 	line-height: 120px; 
 	margin: 0; 
 	padding-left: 40px; 
 	color: #777;
+}
+.navbar-default {
+	border-radius: 0;
+}
+hr {
+	border-color: #bbb; 	
+}
+#map {
+	height: 450px;
+	width: 100%;
 }

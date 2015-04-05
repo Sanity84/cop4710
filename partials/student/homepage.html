@@ -1,74 +1,40 @@
-<h1>Welcome, {{ firstname }}</h1>
-<p ng-show="noSchool">To participate in School only and RSO events select your home school.</p>
-<hr>
-<div class="row" ng-show="noSchool">
-	<div class="col-sm-6">
-		<h2>Select a Home School</h2>
-		<form ng-submit="joinSchool()" class="form-horizontal">
-			<div class="form-group">
-				<div class="col-sm-12">
-					<select class="form-control" ng-model="school" ng-options="university.name for university in universities"></select>
+<div class="row">
+	<div class="col-sm-12">
+		<h1>Welcome, {{ firstname }}</h1>
+		<hr>
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p class="lead">Upcoming {{ university.name }} and RSO Events</p>
+					</div>
 				</div>
 			</div>
-			<input type="submit" value="Join" class="btn btn-primary pull-right">
-			<div class="clearfix"></div>
-		</form>
-		<div class="row">
-			<div class="col-sm-12">
-				<p class="lead">Active RSOs</p>
-				<p>TODO: link up active RSOs here</p>
+			<div class="col-sm-4">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p class="lead">My RSOs</p>	
+						<p>You haven't joined any RSOs yet!</p>
+						<hr>
+						<button class="btn btn-warning btn-block btn-sm" data-toggle="modal" data-target="#propose">Propose New RSO</button>
+					</div>
+				</div>
+				<available-rsos></available-rsos>
 			</div>
 		</div>
 	</div>
-	<div class="col-sm-6">
-		<h2>{{ school.name }}</h2>
-		<p>{{ school.description }}</p>
-		<p><strong>Located </strong><br>{{ school.location }}</p>
-	</div>
 </div>
-<div class="row" ng-hide="noSchool">
-	<div class="col-sm-8">
-		<p class="lead">Home School: {{ homeSchool.name }}</p>
-		<p><strong>Events</strong><br>List school-only events here</p>
-	</div>
-	<div class="col-sm-4">
-		<p class="lead">Your RSOs</p>
-		<ul class="list-group">
-			<li class="list-group-item">Example RSO 1</li>
-			<li class="list-group-item">Example RSO 2</li>
-		</ul>
-		
-		<button class="btn btn-primary center-block" ng-click="showNewRSO = true" ng-hide="showNewRSO">Propose New RSO</button>
-		<div ng-show="showNewRSO">
-			<p class="lead">Request New RSO <button class="btn btn-default btn-xs" ng-click="showNewRSO = false">Cancel</button></p>
-			<form ng-submit="" class="form-horizontal" >
-				<div class="form-group">
-					<div class="col-sm-12"><input ng-model="newRSO.name" type="text" class="form-control" placeholder="RSO Name" required></div>
-				</div>
-				<!-- <div class="col-sm-12"> -->
-					<div class="input-group" style="margin-bottom: 10px;">
-						<input ng-model="newRSO.leader" type="text" class="form-control" placeholder="RSO Leader Email" required aria-describedby="basic-addon">
-						<span class="input-group-addon" id="basic-addon">@knights.ucf.edu</span>
-					</div>
-				<!-- </div> -->
-				<div class="input-group" style="margin-bottom: 10px;">
-					<input ng-model="newRSO.member1" type="text" class="form-control" placeholder="RSO Member 1 Email" required><span class="input-group-addon" id="basic-addon">@knights.ucf.edu</span>
-				</div>
-				<div class="input-group" style="margin-bottom: 10px;">
-					<input ng-model="newRSO.member2" type="text" class="form-control" placeholder="RSO Member 2 Email" required><span class="input-group-addon" id="basic-addon">@knights.ucf.edu</span>
-				</div>
-				<div class="input-group" style="margin-bottom: 10px;">
-					<input ng-model="newRSO.member3" type="text" class="form-control" placeholder="RSO Member 3 Email" required><span class="input-group-addon" id="basic-addon">@knights.ucf.edu</span>
-				</div>
-				<div class="input-group" style="margin-bottom: 10px;">
-					<input ng-model="newRSO.member4" type="text" class="form-control" placeholder="RSO Member 4 Email" required><span class="input-group-addon" id="basic-addon">@knights.ucf.edu</span>
-				</div>
-				<div class="input-group" style="margin-bottom: 10px;">
-					<input ng-model="newRSO.member5" type="text" class="form-control" placeholder="RSO Member 5 Email" required><span class="input-group-addon" id="basic-addon">@knights.ucf.edu</span>
-				</div>
-				
-				<input type="submit" value="Submit" class="btn btn-primary btn-block">
-			</form>
+<!-- Modal for proposal -->
+<div class="modal fade" id="propose" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">New RSO Proposal</h4>
+			</div>
+			<div class="modal-body">
+				<rsorequest></rsorequest>	
+			</div>
 		</div>
 	</div>
 </div>

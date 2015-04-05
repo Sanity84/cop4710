@@ -88,6 +88,14 @@ $app->get('/rsorequest', function() use ($app) {
 	echo json_encode($api->getRsoRequests($session_key), JSON_PRETTY_PRINT);
 });
 
+// Admin approve RSO and make it legit
+$app->post('/rso', function() use ($app) {
+	$api = new Api();
+	$session_key = $app->getCookie('session');
+	$rso = json_decode($app->request->getBody(), true);
+	echo json_encode($api->createRso($session_key, $rso), JSON_PRETTY_PRINT);
+});
+
 $app->run();
 
 
