@@ -9,8 +9,8 @@
 		$scope.logout = function() {
 			SessionAPI.remove({}, function(data) {
 				Session.destroy();
-				$rootScope.loggedin = false;
-				$rootScope.isCollapsed = true;
+				// $rootScope.loggedin = false;
+				// $rootScope.isCollapsed = true;
 				$location.url('/university');
 			});
 		};
@@ -34,18 +34,18 @@
 				$scope.login = function(loginUser) {
 					User.resource(loginUser.username, loginUser.password).login({}, function(data) {
 						if(data.status == 200) {
+
 							Session.destroy(); // Clear out any old data
-							$rootScope.loggedin = true;
 							Session.create(data.data);
 							$scope.loginUser = {};
-							$scope.firstname = Session.firstname;
 							$scope.errorMessage = false;
 							$rootScope.isCollapsed = true;
+
 							// Redirect user to respective page
 							switch(Session.role) {
-								case 'admin': $rootScope.homepage = 'adminHomepage'; $location.url('/adminHomepage'); break;
-								case 'leader': $rootScope.homepage = 'leaderHomepage'; $location.url('/leaderHomepage'); break;
-								case 'student': $rootScope.homepage = 'studentHomepage'; $location.url('/studentHomepage'); break;
+								case 'admin': $location.url('/adminHomepage'); break;
+								case 'leader': $location.url('/leaderHomepage'); break;
+								case 'student': $location.url('/studentHomepage'); break;
 								default: $location.url('/events'); break;
 							}
 						}else{
@@ -63,43 +63,44 @@
 			restrict: 'E',
 			templateUrl: 'partials/app/create.html',
 			controller: function($rootScope, $scope, User, Session, $location, University) {
+				// Initialize
+				$scope.universities = [];
+				$scope.register = {};
+				$scope.register.role = 'student'; // default
+
 				University.query(function(response) {
 					$scope.universities = response;
 					$scope.register.school = $scope.universities[0];
 				});
 
 				$scope.create = function(user) {
-					var school = $scope.register.school;
-					// Database API only accepts 'email' Set depending on role
-					var studentemail = user.studentemail;
-					var adminemail = user.adminemail;
-					user.email = (user.role == 'student') ? user.studentemail += user.school.email_domain : user.adminemail;
-					user.universityid = user.school.id; // API expects universityid
-					// When submitting this role is VERY important, if admin no school is auto associated, if a student a school is auto associated
-					User.resource().save(user, function(response) {
+					var email = (user.role == 'student') ? user.studentemail + user.school.email_domain : user.adminemail;
+					user.email = email; // create new email assocation within user object
+					if(user.role == 'student')
+						user.universityid = user.school.id; // ensure there is a universityid for students
+
+					User.resource(null, null).save(user, function(response) {
+						console.log(response);
 						if(response.status == 200) {
-							// Log in newly created user!
-							Session.create(response.data);
-							$rootScope.loggedin = true;
-							$rootScope.firstname = response.data.firstname;
-							// Reset form to make it look pretty
-							$scope.register = {};
-							$scope.register.role = 'student';
-							$scope.register.school = school;
+
+							Session.destroy(); // Clear out any old data / sessions
+							Session.create(response.data); // create new session (auto log in user)
+
+							// General clean up and reset form
 							$scope.errorMessage = false;
-							$scope.isCollapsed = true;
+							$scope.register = {};
+							$scope.register.school = $scope.universities[0];
+							$scope.register.role = 'student';
+
+							// Redirect newly created user to their homepage
 							switch(Session.role) {
-								case 'admin': $rootScope.homepage = 'adminHomepage'; $location.url('/adminHomepage'); break;
-								case 'leader': $rootScope.homepage = 'leaderHomepage'; $location.url('/leaderHomepage'); break;
-								case 'student': $rootScope.homepage = 'studentHomepage'; $location.url('/studentHomepage'); break;
+								case 'admin': $location.url('/adminHomepage'); break;
+								case 'leader': $location.url('/leaderHomepage'); break;
+								case 'student': $location.url('/studentHomepage'); break;
 								default: $location.url('/events'); break;
 							}
 						}else{
 							$scope.errorMessage = response.data.message;
-							$scope.register.studentemail = studentemail;
-							$scope.register.adminemail = adminemail;
-							$scope.register.email = null;
-							// TODO: Do fix here for email addresses for student creation? 
 						}
 					});
 				};

@@ -5,6 +5,7 @@
 		this.create = function(data) {
 			$rootScope.loggedin = true;
 			$rootScope.firstname = data.firstname;
+			$rootScope.isCollapsed = true;
 			Cookie.put('session', data.session, null); // Only session as long as user doesn't close browser
 			this.session = data.session;
 			this.role = data.role;
