@@ -2,11 +2,12 @@
 require '../vendor/autoload.php';
 require 'api.inc.php';
 
+// Newer more organized version below
+require 'models/model.inc.php';
+require 'models/event.inc.php';
+
 $app = new \Slim\Slim();
 $app->contentType('application/json');
-// $app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost');
-header('Access-Control-Allow-Origin: *');
-header('Vary: Accept-Encoding');
 
 $app->get('/getAllUsers', function() use ($app) {
 	$api = new Api();
@@ -96,9 +97,39 @@ $app->post('/rso', function() use ($app) {
 	echo json_encode($api->createRso($session_key, $rso), JSON_PRETTY_PRINT);
 });
 
+//****************************************
+// NEW VERSION OF ORGANIZATION OF MODELS 
+//****************************************
+
+// Create Event
+$app->post('/event', function() use ($app) {
+	$event = new Event();
+	$event_details = json_decode($app->request->getBody(), true);
+	$session_key = $app->getCookie('session');
+	echo json_encode($event->createEvent($event_details, $session_key), JSON_PRETTY_PRINT);
+});
+
+// Get all public events
+$app->get('/event', function() use ($app) {
+	$event = new Event();
+	echo json_encode($event->getEvents(), JSON_PRETTY_PRINT);
+});
+
+// Get all events by university id 
+$app->get('/university/:university_id/event/:private', function($university_id = null, $private = false) use ($app) {
+	$event = new Event();
+	$session_key = $app->getCookie('session'); // Cookie may or may not exist, that is ok
+	echo json_encode($event->getUniversityEvents($university_id, $session_key), JSON_PRETTY_PRINT);
+});
+
+// Get all events by university / rso / 
+$app->get('/university/:university_id/rso/:rso_id/event/:private', function($university_id = null, $rso_id = null, $private = false) use ($app) {
+	$event = new Event();
+	$session_key = $app->getCookie('session'); // Cookie may or may not exist, that is ok
+	echo json_encode($event->getUniversityRsoEvents($university_id, $session_key), JSON_PRETTY_PRINT);
+});
+
 $app->run();
-
-
 ?>
 
 

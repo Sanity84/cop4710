@@ -78,6 +78,10 @@
 		return $resource('api/rso');
 	}]);
 
+	app.factory('Event', ['$resource', function($resource) {
+		return $resource('api/event');
+	}]);
+
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {
 			if(exdays !== null) {

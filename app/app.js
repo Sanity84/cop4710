@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('App', ['ngRoute', 'App.Services', 'App.Controller', 'App.Events.Controller', 'App.Admin.Controller', 'App.Leader.Controller', 'App.Student.Controller']);
+	var app = angular.module('App', ['ngRoute', 'App.Services', 'App.Controller', 'App.Events.Controller', 'App.Admin.Controller', 'App.Leader.Controller', 'App.Student.Controller', 'ui.tinymce', 'ui.bootstrap']);
 
 	app.config(['$routeProvider', function($routeProvider) {
 

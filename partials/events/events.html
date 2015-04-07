@@ -27,13 +27,16 @@
 	<div class="col-sm-12">
 		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="event in events">
-				<p class="lead"><a ng-href="{{ event.url }}" target="_blank">{{ event.title }}</a></p>
+				<p class="lead">{{ event.name }}</p>
 				<p ng-bind-html="event.description | unsafe"></p>
-				<p><strong>Location</strong> <a ng-href="{{ event.location_url }}" target="_blank">{{ event.location }}</a><br>
+				<p>
+				<strong>University</strong> {{ event.university }}<br>
+				<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
+				<strong>Location</strong> {{ event.location }}<br>
+				<strong>Type</strong> {{ event.type }}<br>
 				<strong>Contact</strong> 
-				<strong>Name:</strong> {{ event.contact_name }} 
-				<strong>Phone:</strong> {{ event.contact_phone }} 
-				<strong>Email:</strong> {{ event.contact_email }}
+				<strong>Phone:</strong> {{ event.contactphone }}<br>
+				<strong>Email:</strong> {{ event.contactemail }}<br>
 				</p>
 			</li>
 		</ul>

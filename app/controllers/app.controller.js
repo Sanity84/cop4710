@@ -5,10 +5,12 @@
 		$rootScope.loggedin = null;
 		$rootScope.firstname = null;
 		$rootScope.homepage = null;
+		$rootScope.isCollapsed = true;
 		$scope.logout = function() {
 			SessionAPI.remove({}, function(data) {
 				Session.destroy();
 				$rootScope.loggedin = false;
+				$rootScope.isCollapsed = true;
 				$location.url('/university');
 			});
 		};
@@ -18,7 +20,9 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/app/navigation.html',
-			controller: function() {}
+			controller: function() {
+
+			}
 		};
 	}]);
 
@@ -36,6 +40,7 @@
 							$scope.loginUser = {};
 							$scope.firstname = Session.firstname;
 							$scope.errorMessage = false;
+							$rootScope.isCollapsed = true;
 							// Redirect user to respective page
 							switch(Session.role) {
 								case 'admin': $rootScope.homepage = 'adminHomepage'; $location.url('/adminHomepage'); break;
@@ -82,6 +87,7 @@
 							$scope.register.role = 'student';
 							$scope.register.school = school;
 							$scope.errorMessage = false;
+							$scope.isCollapsed = true;
 							switch(Session.role) {
 								case 'admin': $rootScope.homepage = 'adminHomepage'; $location.url('/adminHomepage'); break;
 								case 'leader': $rootScope.homepage = 'leaderHomepage'; $location.url('/leaderHomepage'); break;

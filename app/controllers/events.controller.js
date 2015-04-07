@@ -1,7 +1,7 @@
 (function() {
 	var app = angular.module('App.Events.Controller', []);
 
-	app.controller('EventsController', ['$scope', 'UCFPublicEvents', 'University', 'authorized', function($scope, UCFPublicEvents, University, authorized) {
+	app.controller('EventsController', ['$scope', 'Event', 'University', 'authorized', function($scope, Event, University, authorized) {
 		if(authorized) {
 			// Do login require loads here!
 		}
@@ -12,10 +12,13 @@
 			$scope.universities = response;
 			$scope.filter.university = $scope.universities[0];
 		});
-
-		UCFPublicEvents.query(function(response) {
+		$scope.events = [];
+		Event.query(function(response) {
 			$scope.events = response;
 		});
+		// UCFPublicEvents.query(function(response) {
+		// 	$scope.events = response;
+		// });
 	}]);
 
 	app.directive('googleMaps', [function() {
