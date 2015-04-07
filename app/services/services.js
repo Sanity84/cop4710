@@ -1,12 +1,11 @@
 (function(){
-	var app = angular.module('App.Services', ['ngResource', 'base64', 'ngStorage']);
+	var app = angular.module('App.Services', ['ngResource', 'base64']);
 
-	app.service('Session', ['$rootScope', '$sessionStorage', 'Cookie', 'SessionAPI', function($rootScope, $sessionStorage, Cookie, SessionAPI) {
+	app.service('Session', ['$rootScope', 'Cookie', function($rootScope, Cookie) {
 		this.create = function(data) {
 			$rootScope.loggedin = true;
 			$rootScope.firstname = data.firstname;
 			Cookie.put('session', data.session, null); // Only session as long as user doesn't close browser
-			// $sessionStorage.role = data.role;
 			this.session = data.session;
 			this.role = data.role;
 			this.firstname = data.firstname;
@@ -21,11 +20,10 @@
 		this.destroy = function() {
 			$rootScope.loggedin = false;
 			$rootScope.firstname = false;
-			// delete $sessionStorage.role;
 			this.session = null;
 			this.role = null;
 			this.firstname = null;
-			Cookie.put('session', '', -1); // Kill cookie
+			Cookie.put('session', '', -1);
 		};
 
 	}]);
@@ -48,10 +46,6 @@
 
 	app.factory('SessionAPI', ['$resource', function($resource) {
 		return $resource('api/session');
-	}]);
-
-	app.factory('Test', ['$resource', function($resource) {
-		return $resource('api/test');
 	}]);
 
 	app.factory('UserUniversity', ['$resource', function($resource) {
@@ -114,28 +108,4 @@
 		};
 	});
 
-	// Fix for bootstrap nav collapse in mobile when link is clicked
-	// Introducues bug with logout because of a link
-	// app.directive('navCollapse', function () {
-	// 	return {
-	// 		restrict: 'A',
-	// 		link: function (scope, element, attrs) {
-	// 			var visible = false;
-
-	// 			element.on('show.bs.collapse', function () {
-	// 				visible = true;
-	// 			});
-
-	// 			element.on("hide.bs.collapse", function () {
-	// 				visible = false;
-	// 			});
-
-	// 			element.on('click', function(event) {
-	// 				if (visible && 'auto' == element.css('overflow-y')) {
-	// 					element.collapse('hide');
-	// 				}
-	// 			});
-	// 		}
-	// 	};
-	// });
 })();
