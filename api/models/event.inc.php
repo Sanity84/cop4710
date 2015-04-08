@@ -52,6 +52,40 @@ class Event extends Model {
 		}
 	}
 
+	public function getUserEvents($session_key) {
+		try {
+			// retrieve ALL events that this user is eldigble to view
+			$stmt = $this->db->prepare("SELECT S.userid FROM sessions S WHERE S.session=:session AND S.expire>NOW() LIMIT 1");
+			$stmt->execute(array(':session' => $session_key));
+			$user = $stmt->fetch(PDO::FETCH_ASSOC);
+			if(!$user) {
+				$this->NOAUTH['data']['message'] = 'Not authorized';
+				return $this->NOAUTH;
+			}
+
+			// compile all events
+			$stmt = $this->db->prepare("SELECT DISTINCT E.*, R.name rso FROM users U
+				INNER JOIN university_users UU ON UU.userid=U.id
+				LEFT OUTER JOIN rso_users RU ON RU.userid=U.id
+				INNER JOIN events E ON E.universityid=UU.universityid AND (E.rsoid IS NULL OR E.rsoid=RU.rsoid OR E.visibility='public')
+				LEFT OUTER JOIN rsos R ON R.id=E.rsoid
+				WHERE U.id=:userid ORDER BY E.date ASC");
+
+			$stmt->execute(array(':userid' => $user['userid']));
+			$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			if(!$events) {
+				$this->ERROR['data']['message'] = 'No events found';
+				return $this->ERROR;
+			}
+
+			$this->OK['data'] = $events;
+			return $this->OK;
+		}catch(PDOExecption $e) {
+			$this->ERROR['data']['message'] = $e;
+			return $this->ERROR;
+		}// P, M, U
+	}
+
 	public function getEvents() {
 		try {
 			$stmt = $this->db->prepare("SELECT E.*, UV.name university, R.name rso FROM events E 

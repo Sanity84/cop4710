@@ -144,10 +144,16 @@ $app->post('/user/rso', function() use ($app) {
 	echo json_encode($rso->createUserRso($rso_data, $session_key), JSON_PRETTY_PRINT);
 });
 
-$app->get('/rso/:rsoid/event', function($rsoid = null) use ($app) {
-	$rso = new Rso();
+// $app->get('/rso/:rsoid/event', function($rsoid = null) use ($app) {
+// 	$rso = new Rso();
+// 	$session_key = $app->getCookie('session');
+// 	echo json_encode($rso->getRsoEvents($rsoid, $session_key), JSON_PRETTY_PRINT);
+// });
+
+$app->get('/user/event', function() use ($app) {
+	$event = new Event();
 	$session_key = $app->getCookie('session');
-	echo json_encode($rso->getRsoEvents($rsoid, $session_key), JSON_PRETTY_PRINT);
+	echo json_encode($event->getUserEvents($session_key), JSON_PRETTY_PRINT);
 });
 
 $app->run();

@@ -88,6 +88,16 @@
 		return $resource('api/user/rso');
 	}]);
 
+	// Retrieve all events that the user is a member of and the schools
+	app.factory('UserEvent', ['$resource', function($resource) {
+		return $resource('api/user/event');
+	}]);
+
+	// User can view rso events they are a member of
+	// app.factory('RsoEvent', ['$resource', function($resource) {
+	// 	return $resource('api/rso/:rsoid/event');
+	// }]);
+
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {
 			if(exdays !== null) {

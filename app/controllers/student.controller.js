@@ -1,7 +1,7 @@
 (function(){
 	var app = angular.module('App.Student.Controller', []);
 
-	app.controller('StudentHomepageController', ['$scope', 'authorized', 'UserUniversity', '$q', 'UniversityRso', function($scope, authorized, UserUniversity, $q, UniversityRso) {
+	app.controller('StudentHomepageController', ['$scope', 'authorized', 'UserUniversity', '$q', 'UniversityRso', 'UserEvent', function($scope, authorized, UserUniversity, $q, UniversityRso, UserEvent) {
 		if(authorized) {
 			// initialize
 			$scope.university = {};
@@ -10,6 +10,8 @@
 			$scope.joinrso = {};
 			$scope.rso = {};
 			$scope.joinErrorMessage = false;
+			$scope.viewRsoEvents = [];
+			$scope.events = [];
 
 			// Do all loads here!
 			var get_university = function() {
@@ -46,6 +48,13 @@
 					else
 						$scope.member_rsos = false;
 				});
+
+				UserEvent.get(function(response) {
+					console.log(response);
+					if(response.status == 200)
+						$scope.events = response.data;
+				});
+
 			}, function(failure) {
 				console.log('how do you not have a university?!');
 			});
@@ -85,6 +94,9 @@
 			templateUrl: 'partials/student/studentRsos.html',
 			controller: function($scope) {
 
+				$scope.view = function(rso) {
+					
+				};
 			}
 		};
 	}]);

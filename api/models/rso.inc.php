@@ -67,22 +67,22 @@ class Rso extends Model {
 		}
 	}
 
-	public function getRsoEvents($rsoid, $session_key) {
-	// check that the user is authorized to access these super secret rso events
-		$stmt = $this->db->prepare("SELECT E.* FROM sessions S
-			INNER JOIN rso_users RU ON RU.userid=S.userid AND RU.rsoid=:rsoid
-			INNER JOIN events E ON E.rsoid=RU.rsoid
-			WHERE S.session=:session AND S.expire>NOW()");
-		$stmt->execute(array(':session' => $session_key, ':rsoid' => $rsoid));
-		$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		if(!$events) {
-			$this->ERROR['data']['message'] = 'You are not a member';
-			return $this->ERROR;
-		}
-		$this->OK['data'] = $events;
-		return $this->OK;
+	// public function getRsoEvents($rsoid, $session_key) {
+	// // check that the user is authorized to access these super secret rso events
+	// 	$stmt = $this->db->prepare("SELECT E.* FROM sessions S
+	// 		INNER JOIN rso_users RU ON RU.userid=S.userid AND RU.rsoid=:rsoid
+	// 		INNER JOIN events E ON E.rsoid=RU.rsoid
+	// 		WHERE S.session=:session AND S.expire>NOW()");
+	// 	$stmt->execute(array(':session' => $session_key, ':rsoid' => $rsoid));
+	// 	$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	// 	if(!$events) {
+	// 		$this->ERROR['data']['message'] = 'No upcoming events';
+	// 		return $this->ERROR;
+	// 	}
+	// 	$this->OK['data'] = $events;
+	// 	return $this->OK;
 
-	}
+	// }
 }
 
 
