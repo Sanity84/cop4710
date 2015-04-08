@@ -5,6 +5,7 @@ require 'api.inc.php';
 // Newer more organized version below
 require 'models/model.inc.php';
 require 'models/event.inc.php';
+require 'models/rso.inc.php';
 
 $app = new \Slim\Slim();
 $app->contentType('application/json');
@@ -127,6 +128,20 @@ $app->get('/university/:university_id/rso/:rso_id/event/:private', function($uni
 	$event = new Event();
 	$session_key = $app->getCookie('session'); // Cookie may or may not exist, that is ok
 	echo json_encode($event->getUniversityRsoEvents($university_id, $session_key), JSON_PRETTY_PRINT);
+});
+
+// Rso
+$app->get('/university/:universityid/rso(/:member)', function($universityid = null, $member = false) use ($app) {
+	$rso = new Rso();
+	$session_key = $app->getCookie('session');
+	echo json_encode($rso->getUniversityRso($universityid, $session_key, $member), JSON_PRETTY_PRINT);
+});
+
+$app->post('/user/rso', function() use ($app) {
+	$rso = new Rso();
+	$rso_data = json_decode($app->request->getBody(), true);
+	$session_key = $app->getCookie('session');
+	echo json_encode($rso->createUserRso($rso_data, $session_key), JSON_PRETTY_PRINT);
 });
 
 $app->run();

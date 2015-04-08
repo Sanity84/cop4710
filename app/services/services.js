@@ -61,6 +61,7 @@
 		return $resource('http://events.ucf.edu/feed.json');
 	}]);
 
+	// Used for helpful creation of RSOs and account information
 	app.factory('GetAllUsers', ['$resource', function($resource) {
 		return $resource('api/getAllUsers');
 	}]);
@@ -75,6 +76,16 @@
 
 	app.factory('Event', ['$resource', function($resource) {
 		return $resource('api/event');
+	}]);
+
+	// if member is any value this will retrieve a logged in users rsos that they are a member in, else just the schools rsos
+	app.factory('UniversityRso', ['$resource', function($resource) {
+		return $resource('api/university/:universityid/rso/:member');
+	}]);
+
+	// User can join a rso
+	app.factory('UserRso', ['$resource', function($resource) {
+		return $resource('api/user/rso');
 	}]);
 
 	app.service('Cookie', function() {
