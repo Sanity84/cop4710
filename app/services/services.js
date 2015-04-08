@@ -93,10 +93,13 @@
 		return $resource('api/user/event');
 	}]);
 
-	// User can view rso events they are a member of
-	// app.factory('RsoEvent', ['$resource', function($resource) {
-	// 	return $resource('api/rso/:rsoid/event');
-	// }]);
+	app.factory('EventComment', ['$resource', function($resource) {
+		return $resource('api/event/:eventid/comment/:commentid', null, {
+			update: { method: 'PUT' }
+		});
+	}]);
+
+	
 
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {

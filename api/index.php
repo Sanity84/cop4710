@@ -6,6 +6,7 @@ require 'api.inc.php';
 require 'models/model.inc.php';
 require 'models/event.inc.php';
 require 'models/rso.inc.php';
+require 'models/comment.inc.php';
 
 $app = new \Slim\Slim();
 $app->contentType('application/json');
@@ -156,6 +157,50 @@ $app->get('/user/event', function() use ($app) {
 	echo json_encode($event->getUserEvents($session_key), JSON_PRETTY_PRINT);
 });
 
+// Comments
+// Create new comment
+$app->post('event/:eventid/comment', function($eventid = null) use ($app) {
+ $comment = new Comment();
+ $session_key = $app->getCookie('session');
+ $comment_details = json_decode($app->request->getBody(), true);
+ echo json_encode($comment->createComment($comment_details, $eventid, $session_key), JSON_PRETTY_PRINT);
+});
+
+// Update comment
+$app->put('event/:eventid/comment/:commentid', function($eventid = null, $commentid = null) use ($app) {
+	$comment = new Comment();
+	$session_key = $app->getCookie('session');
+	$comment_details = json_decode($app->request->getBody(), true);
+	echo json_encode($comment->updateComment($comment_details, $eventid, $commentid, $session_key), JSON_PRETTY_PRINT);
+});
+
+$app->delete('event/:eventid/comment/:commentid', function($eventid = null, $commentid = null) use ($app) {
+	$comment = new Comment();
+	$session_key = $app->getCookie('session');
+	echo json_encode($comment->deleteComment($commentid, $session_key), JSON_PRETTY_PRINT);
+});
+
+
 $app->run();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
