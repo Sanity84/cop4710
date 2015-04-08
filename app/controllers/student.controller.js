@@ -40,7 +40,6 @@
 
 				// Get all rsos that this student is a member of
 				UniversityRso.get({universityid: $scope.university.id, member: true}, function(response) {
-					// console.log(response);
 					if(response.status == 200) {
 						$scope.member_rsos = response.data;
 						$scope.rso.name = response.data[0];
@@ -50,7 +49,7 @@
 				});
 
 				UserEvent.get(function(response) {
-					// console.log(response);
+					console.log(response);
 					if(response.status == 200)
 						$scope.events = response.data;
 				});

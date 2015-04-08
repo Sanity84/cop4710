@@ -78,7 +78,17 @@ class Event extends Model {
 				return $this->ERROR;
 			}
 
-			$this->OK['data'] = $events;
+			$events_and_comments = array();
+			// loop and get ids to do queries for comments
+			$stmt = $this->db->prepare("SELECT * FROM comments WHERE eventid=:eventid");
+			foreach($events as $event) {
+				$stmt->execute(array(':eventid' => $event['id']));
+				$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+				$events_and_comments[$event['id']] = $event;
+				$events_and_comments[$event['id']]['comments'] = $comments;
+			}
+
+			$this->OK['data'] = $events_and_comments;
 			return $this->OK;
 		}catch(PDOExecption $e) {
 			$this->ERROR['data']['message'] = $e;
