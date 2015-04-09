@@ -9,19 +9,43 @@
 						<p class="lead">Upcoming {{ university.name }} and RSO Events</p>
 					</div>
 					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="event in events">
-							<p class="lead">{{ event.name }}</p>
-							<p ng-bind-html="event.description | unsafe"></p>
-							<p>
-							<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
-							<strong>{{ event.visibility }} Event</strong><br>
-							<strong>Location</strong> {{ event.location }}<br>
-							<strong>Type</strong> {{ event.type }}<br>
-							<strong>Contact</strong> 
-							<strong>Phone:</strong> {{ event.contactphone }}<br>
-							<strong>Email:</strong> {{ event.contactemail }}<br>
-							</p>
-						</li>
+						<div ng-repeat="event in events">
+							<li class="list-group-item">
+								<p class="lead">{{ event.name }}</p>
+								<p ng-bind-html="event.description | unsafe"></p>
+								<p>
+								<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
+								<strong>{{ event.visibility }} Event</strong><br>
+								<strong>Location</strong> {{ event.location }}<br>
+								<strong>Type</strong> {{ event.type }}<br>
+								<strong>Contact</strong> 
+								<strong>Phone:</strong> {{ event.contactphone }}<br>
+								<strong>Email:</strong> {{ event.contactemail }}<br>
+								<strong>Rating: </strong> {{ event.rating }}
+								</p>
+								<p class="lead">Comments</p>
+								<table class="table table-hover" ng-show="event.comments">
+									<tr ng-repeat="comment in event.comments">
+										<td>
+											<button class="pull-right clearfix btn btn-success btn-sm" ng-show="comment.userid == userid">Edit</button>
+											<p><strong>{{ comment.name }}</strong> @ {{ comment.created | date:'short':'UTC' }}<br>
+											{{ comment.body }}</p>
+										</td>
+									</tr>
+								</table>
+								<form ng-submit="addComment(comment, event)" class="form">
+									<div class="form-group">
+										<label for="rating" class="label-control">Rating</label>
+										<select ng-model="comment.rating" id="rating" class="form-control" ng-options="rating.display for rating in ratings"></select>
+									</div>
+									<div class="form-group">
+										<label for="comment" class="label-control">Comment</label>
+										<input ng-model="comment.body" id="comment" type="text" class="form-control">
+									</div>
+									<input type="submit" value="Add Comment" class="btn btn-primary">
+								</form>
+							</li>
+						</div>
 					</ul>
 				</div>
 			</div>

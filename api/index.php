@@ -159,7 +159,7 @@ $app->get('/user/event', function() use ($app) {
 
 // Comments
 // Create new comment
-$app->post('event/:eventid/comment', function($eventid = null) use ($app) {
+$app->post('/event/:eventid/comment', function($eventid = null) use ($app) {
  $comment = new Comment();
  $session_key = $app->getCookie('session');
  $comment_details = json_decode($app->request->getBody(), true);
@@ -167,17 +167,17 @@ $app->post('event/:eventid/comment', function($eventid = null) use ($app) {
 });
 
 // Update comment
-$app->put('event/:eventid/comment/:commentid', function($eventid = null, $commentid = null) use ($app) {
+$app->put('/event/:eventid/comment', function($eventid = null) use ($app) {
 	$comment = new Comment();
 	$session_key = $app->getCookie('session');
 	$comment_details = json_decode($app->request->getBody(), true);
-	echo json_encode($comment->updateComment($comment_details, $eventid, $commentid, $session_key), JSON_PRETTY_PRINT);
+	echo json_encode($comment->updateComment($comment_details, $eventid, $session_key), JSON_PRETTY_PRINT);
 });
 
-$app->delete('event/:eventid/comment/:commentid', function($eventid = null, $commentid = null) use ($app) {
+$app->delete('/event/:eventid/comment', function($eventid = null) use ($app) {
 	$comment = new Comment();
 	$session_key = $app->getCookie('session');
-	echo json_encode($comment->deleteComment($commentid, $session_key), JSON_PRETTY_PRINT);
+	echo json_encode($comment->deleteComment($eventid, $session_key), JSON_PRETTY_PRINT);
 });
 
 

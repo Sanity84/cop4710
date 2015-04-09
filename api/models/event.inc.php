@@ -64,7 +64,7 @@ class Event extends Model {
 			}
 
 			// compile all events
-			$stmt = $this->db->prepare("SELECT DISTINCT E.*, R.name rso FROM users U
+			$stmt = $this->db->prepare("SELECT DISTINCT E.*, R.name rso, DATE_FORMAT(E.date, '%Y-%m-%dT%TZ') date FROM users U
 				INNER JOIN university_users UU ON UU.userid=U.id
 				LEFT OUTER JOIN rso_users RU ON RU.userid=U.id
 				INNER JOIN events E ON E.universityid=UU.universityid AND (E.rsoid IS NULL OR E.rsoid=RU.rsoid OR E.visibility='public')
@@ -80,7 +80,9 @@ class Event extends Model {
 
 			$events_and_comments = array();
 			// loop and get ids to do queries for comments
-			$stmt = $this->db->prepare("SELECT * FROM comments WHERE eventid=:eventid");
+			$stmt = $this->db->prepare("SELECT CONCAT(U.firstname, ' ', U.lastname) name, C.*, DATE_FORMAT(C.created, '%Y-%m-%dT%TZ') created FROM comments C
+				INNER JOIN users U ON U.id=C.userid 
+				WHERE C.eventid=:eventid");
 			foreach($events as $event) {
 				$stmt->execute(array(':eventid' => $event['id']));
 				$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);

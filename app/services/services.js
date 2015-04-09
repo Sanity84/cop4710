@@ -3,9 +3,11 @@
 
 	app.service('Session', ['$rootScope', 'Cookie', function($rootScope, Cookie) {
 		this.create = function(data) {
+			// console.log(data);
 			$rootScope.loggedin = true;
 			$rootScope.firstname = data.firstname;
 			$rootScope.isCollapsed = true;
+			$rootScope.userid = data.id;
 			Cookie.put('session', data.session, null); // Only session as long as user doesn't close browser
 			this.session = data.session;
 			this.role = data.role;

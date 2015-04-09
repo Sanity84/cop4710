@@ -127,7 +127,21 @@ class Api {
 			$this->ERROR['data']['message'] = 'Could not save user, check data';
 			return $this->ERROR;
 		}
+		
+		// Clear out memory and stuff
+		while($this->db->more_results()) {
+		    $this->db->next_result();
+		    if($res = $this->db->store_result()) {
+		        $res->free(); 
+		    }
+		}
 
+		// get id for comments verification
+		$query = sprintf("SELECT * FROM sessions WHERE session='%s' LIMIT 1", $credentials['session']);
+		$result = $this->db->query($query);
+		$user = $result->fetch_assoc();
+
+		$this->OK['data']['id'] = $user['userid'];
 		$this->OK['data']['session'] = $credentials['session'];
 		$this->OK['data']['firstname'] = $credentials['firstname'];
 		$this->OK['data']['role'] = $credentials['role'];
@@ -173,6 +187,7 @@ class Api {
 			$this->ERROR['data']['message'] = 'An error occured, try again';
 			return $this->ERROR;
 		}
+		$this->OK['data']['id'] = $row['id'];
 		$this->OK['data']['role'] = $row['role'];
 		$this->OK['data']['session'] = $session;
 		$this->OK['data']['firstname'] = $row['firstname'];
@@ -271,9 +286,11 @@ class Api {
 		}
 		$row = $result->fetch_assoc();
 
-		$query = sprintf("SELECT U.role, U.firstname FROM users U WHERE U.id=%d", $row['userid']);
+		$query = sprintf("SELECT U.role, U.firstname, U.id FROM users U WHERE U.id=%d", $row['userid']);
 		$result = $this->db->query($query);
 		$row = $result->fetch_assoc();
+
+		$this->OK['data']['id'] = $row['id'];
 		$this->OK['data']['role'] = $row['role'];
 		$this->OK['data']['firstname'] = $row['firstname'];
 		$this->OK['data']['session'] = $session_key;

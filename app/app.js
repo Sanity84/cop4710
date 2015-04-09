@@ -17,7 +17,7 @@
 					if(response.status == 200) {
 						Session.create(response.data);
 						deferred.resolve(true);
-						console.log('Refreshing user data');
+						// console.log('Refreshing user data');
 					}else{
 						console.log('Key no longer valid');
 						Session.destroy();

@@ -9,6 +9,8 @@ class Model {
 	public function __construct() {
 		try {
 			$this->db = new PDO('mysql:host=127.0.0.1;dbname=collegeevent', 'cnt4710', 'password123');
+			// uncomment for debugging
+			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			date_default_timezone_set('America/New_York');
 		}catch(PDOExecption $e) {
 			echo $e->getMessage();
