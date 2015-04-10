@@ -1,14 +1,15 @@
-<p class="lead">My RSOs</p>	
+<p class="lead">Filter Events</p>	
 <p ng-hide="member_rsos">You haven't joined any RSOs yet!</p>
 <div ng-show="member_rsos">
 	<form class="form" ng-submit="view(rso)">
 		<div class="form-group">
 			<label for="rsoname" class="label-control">RSOs</label>
-			<select class="form-control" id="rsoname" ng-model="rso.name" ng-options="mrso.name for mrso in member_rsos track by mrso.id"></select>
+			<!-- <select class="form-control" id="rsoname" ng-model="rso.name" ng-options="mrso.name for mrso in member_rsos track by mrso.id"></select> -->
+			<select class="form-control" id="rsoname" ng-model="rso.name" ng-options="mrso.name for mrso in member_rsos"></select>
 		</div>
 		<p><strong>About</strong><br>
 			{{ rso.name.description }}
 		</p>
-		<input type="submit" value="View Events" class="btn btn-primary btn-block">
+		<!-- <input type="submit" value="View Events" class="btn btn-primary btn-block"> -->
 	</form>
 </div>

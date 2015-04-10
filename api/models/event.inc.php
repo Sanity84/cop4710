@@ -38,6 +38,7 @@ class Event extends Model {
 				':rsoid' => $result['rsoid'],
 				':universityid' => $result['universityid']
 			);
+			
 			if(!$stmt->execute($insert)) {
 				$this->ERROR['data']['message'] = 'Something went wrong :(';
 				return $this->ERROR;
@@ -90,7 +91,8 @@ class Event extends Model {
 				$events_and_comments[$event['id']]['comments'] = $comments;
 			}
 
-			$this->OK['data'] = $events_and_comments;
+
+			$this->OK['data'] = array_values($events_and_comments);
 			return $this->OK;
 		}catch(PDOExecption $e) {
 			$this->ERROR['data']['message'] = $e;

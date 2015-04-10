@@ -53,6 +53,7 @@
 					}
 				});
 			};
+
 			// Do all loads here!
 			var get_university = function() {
 				var deferred = $q.defer();
@@ -82,7 +83,13 @@
 				UniversityRso.get({universityid: $scope.university.id, member: true}, function(response) {
 					if(response.status == 200) {
 						$scope.member_rsos = response.data;
+						// do some fancy manipulatoin to get desired results
+						angular.forEach($scope.member_rsos, function(value, key) {
+						  value.filter = value.name;
+						});
+						$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
 						$scope.rso.name = response.data[0];
+						// console.log($scope.member_rsos);
 					}
 					else
 						$scope.member_rsos = false;
@@ -133,9 +140,6 @@
 			templateUrl: 'partials/student/studentRsos.html',
 			controller: function($scope) {
 
-				$scope.view = function(rso) {
-					
-				};
 			}
 		};
 	}]);
@@ -144,9 +148,24 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/student/rsorequest.html',
-			controller: function($scope) {
+			controller: function($scope, RsoRequest) {
 				$scope.rsop = {};
 				$scope.rsop.type = 'club';
+
+				// Continue fixing this mess.. most likely just do an entire rewrite of the api call
+				$scope.rsoCreate = function(rsop) {
+
+					rsop.universityid = $scope.university.id;
+					rsop.email_domain = $scope.university.email_domain;
+					RsoRequest.save(rsop, function(response) {
+						console.log(response);
+						if(response.status == 200) {
+
+						}else {
+							$scope.rsoRequestError = response.data.message;
+						}
+					});
+				};
 			}
 		};
 	}]);

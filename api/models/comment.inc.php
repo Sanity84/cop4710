@@ -100,10 +100,7 @@ class Comment extends Model {
 				':eventid' => (!$eventid) ? null : $eventid,
 				':userid' => $user['userid']
 			));
-			// if(!$stmt->countRows() < 1) {
-			// 	$this->ERROR['data']['message'] = 'Could not delete comment';
-			// 	return $this->ERROR;
-			// }
+			
 			$this->OK['data']['message'] = 'Deleted comment';
 			return $this->OK;
 

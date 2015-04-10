@@ -419,9 +419,11 @@ class Api {
 		$rso['member5'] = $this->db->real_escape_string($rso['member5']);
 		if(!$rso['universityid']) { $this->ERROR['data']['message'] = 'Invalid university'; return $this->ERROR; }
 		$rso['universityid'] = $this->db->real_escape_string($rso['universityid']);
+		if(!$rso['email_domain']) { $this->ERROR['data']['message'] = 'Invalid email domain'; return $this->ERROR; }
+		$rso['email_domain'] = $this->db->real_escape_string($rso['email_domain']);
 
 		// Look up respective user id's of these emails!
-		$query = sprintf("SELECT U.id FROM users U WHERE U.email='%s' AND U.role='student' LIMIT 1", $rso['leader']);
+		$query = sprintf("SELECT U.id FROM users U WHERE U.email='%s' AND U.role='student' LIMIT 1", $rso['leader'].$rso['email_domain']);
 		$result = $this->db->query($query);
 		if($result->num_rows < 1) {
 			$this->ERROR['data']['message'] = sprintf("%s cannot be RSO leader. They may already be leader of another RSO", $rso['leader']);
@@ -431,7 +433,7 @@ class Api {
 
 		// Fetch everyone elses email addresses!
 		$query = sprintf("SELECT U.id FROM users U WHERE U.email='%s' OR U.email='%s' OR U.email='%s' OR U.email='%s' OR U.email='%s'", 
-			$rso['member1'], $rso['member2'], $rso['member3'], $rso['member4'], $rso['member5']
+			$rso['member1'].$rso['email_domain'], $rso['member2'].$rso['email_domain'], $rso['member3'].$rso['email_domain'], $rso['member4'].$rso['email_domain'], $rso['member5'].$rso['email_domain']
 		);
 		$results = $this->db->query($query);
 		if($results->num_rows < 5) {
