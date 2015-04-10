@@ -35,7 +35,21 @@
 						$scope.comment.rating = $scope.ratings[4];
 						event.comments.push(response.data);
 					}else{
-						console.log('NO!');
+						// console.log('NO!');
+						$scope.comment.rating = $scope.ratings[4];
+					}
+				});
+			};
+
+			$scope.deleteComment = function(comment, event) {
+			
+				var indexOfComment = event.comments.indexOf(comment);
+			
+				EventComment.remove({eventid: event.id}, function(response) {
+					
+					if(response.status == 200) {
+						// splice event array where this id did exist!
+						event.comments.splice(indexOfComment, 1);
 					}
 				});
 			};

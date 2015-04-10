@@ -27,7 +27,10 @@
 								<table class="table table-hover" ng-show="event.comments">
 									<tr ng-repeat="comment in event.comments">
 										<td>
-											<button class="pull-right clearfix btn btn-success btn-sm" ng-show="comment.userid == userid">Edit</button>
+											<div>
+												<!-- <button class="pull-right clearfix btn btn-success btn-sm" ng-show="comment.userid == userid">Edit</button> -->
+												<button style="margin-right: 5px;" class="pull-right clearfix btn btn-danger btn-sm" ng-show="comment.userid == userid" ng-click="deleteComment(comment, event)">Delete</button>
+											</div>
 											<p><strong>{{ comment.name }}</strong> @ {{ comment.created | date:'short':'UTC' }}<br>
 											<strong>Rated:</strong> {{ comment.rating }} stars<br>
 											{{ comment.body }}</p>

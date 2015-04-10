@@ -95,15 +95,15 @@ class Comment extends Model {
 				return $this->ERROR;
 			}
 
-			$stmt = $this->db->prepare("DELETE FROM sessions WHERE eventid=:eventid AND userid=:userid");
+			$stmt = $this->db->prepare("DELETE FROM comments WHERE eventid=:eventid AND userid=:userid");
 			$stmt->execute(array(
 				':eventid' => (!$eventid) ? null : $eventid,
 				':userid' => $user['userid']
 			));
-			if(!$stmt->countRows() < 1) {
-				$this->ERROR['data']['message'] = 'Could not delete comment';
-				return $this->ERROR;
-			}
+			// if(!$stmt->countRows() < 1) {
+			// 	$this->ERROR['data']['message'] = 'Could not delete comment';
+			// 	return $this->ERROR;
+			// }
 			$this->OK['data']['message'] = 'Deleted comment';
 			return $this->OK;
 

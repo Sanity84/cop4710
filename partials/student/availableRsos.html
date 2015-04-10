@@ -7,7 +7,7 @@
 				<select class="form-control" id="rsoname" ng-model="joinrso.name" ng-options="arso.name for arso in available_rsos track by arso.id"></select>
 			</div>
 			<p><strong>About</strong><br>
-				Words and things about the rso you selected. There is pizza and games and event stuff.
+				{{ joinrso.name.description }}
 			</p>
 			<input type="submit" value="Join" class="btn btn-primary btn-block">
 		</form>
