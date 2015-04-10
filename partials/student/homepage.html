@@ -21,7 +21,7 @@
 								<strong>Contact</strong> 
 								<strong>Phone:</strong> {{ event.contactphone }}<br>
 								<strong>Email:</strong> {{ event.contactemail }}<br>
-								<strong>Rating: </strong> {{ event.rating }}
+								<strong>Rating: </strong> {{ event.rating | number:1 }} stars
 								</p>
 								<p class="lead">Comments</p>
 								<table class="table table-hover" ng-show="event.comments">
@@ -29,6 +29,7 @@
 										<td>
 											<button class="pull-right clearfix btn btn-success btn-sm" ng-show="comment.userid == userid">Edit</button>
 											<p><strong>{{ comment.name }}</strong> @ {{ comment.created | date:'short':'UTC' }}<br>
+											<strong>Rated:</strong> {{ comment.rating }} stars<br>
 											{{ comment.body }}</p>
 										</td>
 									</tr>

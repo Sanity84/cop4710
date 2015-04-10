@@ -25,18 +25,19 @@
 			$scope.addComment = function(comment, event) {
 				comment.rating = comment.rating.value;
 				comment.eventid = event.id;
-				console.log(comment);
-				console.log(event);
+				// console.log(comment);
+				// console.log(event);
 				// successful add
-				// EventComment.save({eventid: eventid}, comment, function(response) {
-				// 	console.log(response);
-				// 	if(response.status == 200) {
-				// 		$scope.comment = {};
-				// 		$scope.comment.rating = $scope.ratings[4];
-				// 	}else{
-				// 		console.log('NO!');
-				// 	}
-				// });
+				EventComment.save({eventid: event.id}, comment, function(response) {
+					console.log(response);
+					if(response.status == 200) {
+						$scope.comment = {};
+						$scope.comment.rating = $scope.ratings[4];
+						event.comments.push(response.data);
+					}else{
+						console.log('NO!');
+					}
+				});
 			};
 			// Do all loads here!
 			var get_university = function() {

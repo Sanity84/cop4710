@@ -21,8 +21,8 @@ class Comment extends Model {
 				$this->ERROR['data']['message'] = 'You have already commented and rated this event';
 				return $this->ERROR;
 			}
-
-			$stmt = $this->db->prepare("INSERT INTO comments (body, userid, eventid, rating)
+			
+			$stmt = $this->db->prepare("INSERT INTO comments (body, userid, eventid, rating) 
 				VALUES (:body, :userid, :eventid, :rating)");
 			$stmt->execute(array(
 				':body' => (!$comment['body']) ? null : $comment['body'],
@@ -31,7 +31,17 @@ class Comment extends Model {
 				':rating' => (!$comment['rating']) ? null : $comment['rating']
 			));
 
-			$stmt = $this->db->prepare("SELECT * FROM comments WHERE userid=:userid AND eventid=:eventid LIMIT 1");
+			$stmt = $this->db->prepare("UPDATE events 
+				SET times_rated=times_rated+1, total_ratings=total_ratings+:rating, rating=((total_ratings+:rating) / (times_rated+1)) 
+				WHERE id=:eventid");
+			$stmt->execute(array(
+				':rating' => (!$comment['rating']) ? null : $comment['rating'],
+				':eventid' => (!$eventid) ? null : $eventid
+			));
+
+			$stmt = $this->db->prepare("SELECT C.*, CONCAT(U.firstname, ' ', U.lastname) name FROM comments C
+			INNER JOIN users U ON U.id=C.userid
+			WHERE C.userid=:userid AND C.eventid=:eventid LIMIT 1");
 			$stmt->execute(array(':userid' => $user['userid'], ':eventid' => (!$eventid) ? null : $eventid));
 			$new_comment = $stmt->fetch(PDO::FETCH_ASSOC);
 
