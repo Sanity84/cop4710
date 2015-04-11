@@ -38,7 +38,7 @@
 							Session.destroy(); // Clear out any old data
 							Session.create(data.data);
 							$scope.loginUser = {};
-							$scope.errorMessage = false;
+							$scope.errorMessage_login = false;
 							$rootScope.isCollapsed = true;
 
 							// Redirect user to respective page
@@ -50,7 +50,7 @@
 							}
 						}else{
 							$scope.loggedin = false;
-							$scope.errorMessage = data.data.message;
+							$scope.errorMessage_login = data.data.message;
 						}
 					});
 				};
@@ -87,7 +87,7 @@
 							Session.create(response.data); // create new session (auto log in user)
 
 							// General clean up and reset form
-							$scope.errorMessage = false;
+							$scope.errorMessage_create = false;
 							$scope.register = {};
 							$scope.register.school = $scope.universities[0];
 							$scope.register.role = 'student';
@@ -100,7 +100,8 @@
 								default: $location.url('/events'); break;
 							}
 						}else{
-							$scope.errorMessage = response.data.message;
+							$scope.errorMessage_create = response.data.message;
+							$scope.create.submitted = true;
 						}
 					});
 				};
