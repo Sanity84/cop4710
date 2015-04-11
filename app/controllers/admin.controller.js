@@ -75,11 +75,11 @@
 							// populate university
 							$scope.university = response.data;
 							$scope.school = {}; // clear out
-							$scope.errorMessage = false;
+							$scope.errorMessage_createprofile = false;
 							// show success
 						}else{
 							// show error message
-							$scope.errorMessage = response.data.message;
+							$scope.errorMessage_createprofile = response.data.message;
 						}
 					});
 				};
