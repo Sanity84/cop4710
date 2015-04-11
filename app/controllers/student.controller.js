@@ -1,7 +1,7 @@
 (function(){
 	var app = angular.module('App.Student.Controller', []);
 
-	app.controller('StudentHomepageController', ['$scope', 'authorized', 'UserUniversity', '$q', 'UniversityRso', 'UserEvent', 'EventComment', function($scope, authorized, UserUniversity, $q, UniversityRso, UserEvent, EventComment) {
+	app.controller('StudentHomepageController', ['$scope', 'authorized', 'UserUniversity', '$q', 'UniversityRso', 'UserEvent', 'EventComment', '$modal', function($scope, authorized, UserUniversity, $q, UniversityRso, UserEvent, EventComment, $modal) {
 		if(authorized) {
 			// initialize
 			$scope.university = {};
@@ -25,9 +25,6 @@
 			$scope.addComment = function(comment, event) {
 				comment.rating = comment.rating.value;
 				comment.eventid = event.id;
-				// console.log(comment);
-				// console.log(event);
-				// successful add
 				EventComment.save({eventid: event.id}, comment, function(response) {
 					console.log(response);
 					if(response.status == 200) {
@@ -44,9 +41,7 @@
 			$scope.deleteComment = function(comment, event) {
 			
 				var indexOfComment = event.comments.indexOf(comment);
-			
 				EventComment.remove({eventid: event.id}, function(response) {
-					
 					if(response.status == 200) {
 						// splice event array where this id did exist!
 						event.comments.splice(indexOfComment, 1);
@@ -105,6 +100,43 @@
 				console.log('how do you not have a university?!');
 			});
 		}
+
+		$scope.openCreateRso = function() {
+			var modalInstance = $modal.open({
+				// size: 'lg',
+				templateUrl: 'partials/student/rsorequest.html',
+				controller: function($scope, $modalInstance, university) {
+					$scope.university = university;
+					$scope.rsop = {};
+					$scope.rsop.type = 'club';
+
+					$scope.close = function() {
+						$modalInstance.close();
+					};
+
+					$scope.rsoCreate = function(rsop) {
+						rsop.email_domain = $scope.university.email_domain;
+						// console.log(rsop);
+						UniversityRso.save({universityid: $scope.university.id}, rsop, function(response) {
+							if(response.status == 200) {
+								$scope.rsoRequestError = false;
+								$scope.rsop = {};
+								$scope.rsop.type = 'club';
+								$scope.$parent.rsoSuccess = response.data.message;
+								$modalInstance.close();
+							}else{
+								$scope.rsoRequestError = response.data.message;
+							}
+						});
+					};
+				},
+				resolve: {
+					university: function() {
+						return $scope.university;
+					}
+				}
+			});
+		};
 	}]);
 
 	app.directive('availableRsos', [function() {
@@ -118,7 +150,7 @@
 						rsoid: joinrso.name.id
 					};
 					UserRso.save(rso, function(response) {
-						// console.log(response);
+						console.log(response);
 						if(status == 200) {
 							$scope.joinErrorMessage = false;
 						}else{
@@ -144,31 +176,36 @@
 		};
 	}]);
 
-	app.directive('rsorequest', [function() {
-		return {
-			restrict: 'E',
-			templateUrl: 'partials/student/rsorequest.html',
-			controller: function($scope, RsoRequest) {
-				$scope.rsop = {};
-				$scope.rsop.type = 'club';
+	// app.directive('rsorequest', [function() {
+	// 	return {
+	// 		restrict: 'E',
+	// 		templateUrl: 'partials/student/rsorequest.html',
+	// 		controller: function($scope, UniversityRso) {
+	// 			$scope.rsop = {};
+	// 			$scope.rsop.type = 'club';
 
-				// Continue fixing this mess.. most likely just do an entire rewrite of the api call
-				$scope.rsoCreate = function(rsop) {
 
-					rsop.universityid = $scope.university.id;
-					rsop.email_domain = $scope.university.email_domain;
-					RsoRequest.save(rsop, function(response) {
-						console.log(response);
-						if(response.status == 200) {
+	// 			// Continue fixing this mess.. most likely just do an entire rewrite of the api call
+	// 			$scope.rsoCreate = function(rsop) {
 
-						}else {
-							$scope.rsoRequestError = response.data.message;
-						}
-					});
-				};
-			}
-		};
-	}]);
+	// 				rsop.email_domain = $scope.university.email_domain;
+	// 				// console.log(rsop);
+	// 				UniversityRso.save({universityid: $scope.university.id}, rsop, function(response) {
+	// 					console.log(response);
+	// 					if(response.status == 200) {
+	// 						// close window
+	// 						// everythins is working as it should
+	// 						$scope.rsop = {};
+	// 						$scope.rsop.type = 'club';
+	// 					}else{
+	// 						$scope.rsoRequestError = response.data.message;
+	// 					}
+	// 				});
+
+	// 			};
+	// 		}
+	// 	};
+	// }]);
 
 
 })();

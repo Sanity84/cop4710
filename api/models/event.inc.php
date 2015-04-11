@@ -19,8 +19,8 @@ class Event extends Model {
 			}
 
 			// Create the new event
-			$stmt = $this->db->prepare("INSERT INTO events (name, location, type, visibility, date, description, contactphone, contactemail, rsoid, universityid) 
-				VALUES (:name, :location, :type, :visibility, :date, :description, :contactphone, :contactemail, :rsoid, :universityid)");
+			$stmt = $this->db->prepare("INSERT INTO events (name, location_name, type, visibility, date, description, contactphone, contactemail, rsoid, universityid, location_lat, location_lng) 
+				VALUES (:name, :location_name, :type, :visibility, :date, :description, :contactphone, :contactemail, :rsoid, :universityid, :location_lat, :location_lng)");
 			
 			// Fix date to insert into mysql
 			$date = new DateTime($event['date']);
@@ -28,15 +28,17 @@ class Event extends Model {
 
 			$insert = array(
 				':name' => $event['name'],
-				':location' => $event['location'],
+				':location_name' => $event['location'],
 				':type' => $event['type'],
 				':visibility' => $event['visibility'],
 				':date' => $event['date'],
 				':description' => $event['description'],
-				':contactphone' => $event['contactphone'],
-				':contactemail' => $event['contactemail'],
-				':rsoid' => $result['rsoid'],
-				':universityid' => $result['universityid']
+				':contactphone' => (!$event['contactphone']) ? null : $event['contactphone'],
+				':contactemail' => (!$event['contactemail']) ? null : $event['contactemail'],
+				':rsoid' => (!$result['rsoid']) ? null : $result['rsoid'],
+				':universityid' => $result['universityid'],
+				':location_lat' => $event['location_lat'],
+				':location_lng' => $event['location_lng']
 			);
 			
 			if(!$stmt->execute($insert)) {
@@ -44,8 +46,9 @@ class Event extends Model {
 				return $this->ERROR;
 			}
 
-			$this->OK['input'] = $event;
+			// $this->OK['input'] = $event;
 			// $this->OK['data'] = $result;
+			$this->OK['data']['message'] = 'Event created successfully';
 			return $this->OK;
 		}catch(PDOExecption $e) {
 			$this->ERROR['data']['message'] = $e->getMessage();

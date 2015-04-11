@@ -78,11 +78,17 @@ $app->get('/university(/:id)', function($id = null) use ($app) {
 		echo json_encode($api->getUniversity($id), JSON_PRETTY_PRINT);
 });
 
+// $app->post('/rsorequest', function() use ($app) {
+// 	$api = new Api();
+// 	$rso = json_decode($app->request->getBody(), true);
+// 	$session_key = $app->getCookie('session');
+// 	echo json_encode($api->createRsoRequest($rso, $session_key), JSON_PRETTY_PRINT);
+// });
 $app->post('/rsorequest', function() use ($app) {
-	$api = new Api();
-	$rso = json_decode($app->request->getBody(), true);
+	$rsorequest = new Rsorequest();
 	$session_key = $app->getCookie('session');
-	echo json_encode($api->createRsoRequest($rso, $session_key), JSON_PRETTY_PRINT);
+	$rsorequest_details = json_decode($app->request->getBody(), true);
+	echo json_encode($rsorequest->createRsorequest($rsorequest_details, $session_key), JSON_PRETTY_PRINT);
 });
 
 $app->get('/rsorequest', function() use ($app) {
@@ -138,6 +144,13 @@ $app->get('/university/:universityid/rso(/:member)', function($universityid = nu
 	echo json_encode($rso->getUniversityRso($universityid, $session_key, $member), JSON_PRETTY_PRINT);
 });
 
+$app->post('/university/:universityid/rso', function($universityid = null) use ($app) {
+	$rso = new Rso();
+	$session_key = $app->getCookie('session');
+	$rso_details = json_decode($app->request->getBody(), true);
+	echo json_encode($rso->createUniversityRso($rso_details, $universityid, $session_key), JSON_PRETTY_PRINT);
+});
+
 $app->post('/user/rso', function() use ($app) {
 	$rso = new Rso();
 	$rso_data = json_decode($app->request->getBody(), true);
@@ -145,11 +158,11 @@ $app->post('/user/rso', function() use ($app) {
 	echo json_encode($rso->createUserRso($rso_data, $session_key), JSON_PRETTY_PRINT);
 });
 
-// $app->get('/rso/:rsoid/event', function($rsoid = null) use ($app) {
-// 	$rso = new Rso();
-// 	$session_key = $app->getCookie('session');
-// 	echo json_encode($rso->getRsoEvents($rsoid, $session_key), JSON_PRETTY_PRINT);
-// });
+$app->get('/rso/:rsoid/event', function($rsoid = null) use ($app) {
+	$rso = new Rso();
+	$session_key = $app->getCookie('session');
+	echo json_encode($rso->getRsoEvents($rsoid, $session_key), JSON_PRETTY_PRINT);
+});
 
 $app->get('/user/event', function() use ($app) {
 	$event = new Event();

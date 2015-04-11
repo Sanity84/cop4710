@@ -1,22 +1,113 @@
 (function(){
 	var app = angular.module('App.Leader.Controller', ['ui.tinymce']);
 
-	app.controller('LeaderHomepageController', ['$scope', 'authorized', function($scope, authorized) {
-		$scope.authorized = false;
+	app.controller('LeaderHomepageController', ['$scope', 'authorized', '$modal', 'UserUniversity', '$q', 'UniversityRso', 'UserEvent', 'EventComment', 
+		function($scope, authorized, $modal, UserUniversity, $q, UniversityRso, UserEvent, EventComment) {
+		
 		if(authorized) {
+			// initialize
+			$scope.university = {};
+			$scope.available_rsos = [];
+			$scope.member_rsos = [];
+			$scope.joinrso = {};
+			$scope.rso = {};
+			$scope.joinErrorMessage = false;
+			$scope.viewRsoEvents = [];
+			$scope.events = [];
+			$scope.ratings = [
+				{ value:1, display: '1 star'},
+				{ value:2, display: '2 star'},
+				{ value:3, display: '3 star'},
+				{ value:4, display: '4 star'},
+				{ value:5, display: '5 star'}
+			];
+			$scope.comment = {};
+			$scope.comment.rating = $scope.ratings[4];
+
+			$scope.addComment = function(comment, event) {
+				comment.rating = comment.rating.value;
+				comment.eventid = event.id;
+				EventComment.save({eventid: event.id}, comment, function(response) {
+					console.log(response);
+					if(response.status == 200) {
+						$scope.comment = {};
+						$scope.comment.rating = $scope.ratings[4];
+						event.comments.push(response.data);
+					}else{
+						// console.log('NO!');
+						$scope.comment.rating = $scope.ratings[4];
+					}
+				});
+			};
+
+			$scope.deleteComment = function(comment, event) {
+			
+				var indexOfComment = event.comments.indexOf(comment);
+				EventComment.remove({eventid: event.id}, function(response) {
+					if(response.status == 200) {
+						// splice event array where this id did exist!
+						event.comments.splice(indexOfComment, 1);
+					}
+				});
+			};
+
 			// Do all loads here!
-			$scope.authorized = true; // Used to cascade into directives
+			var get_university = function() {
+				var deferred = $q.defer();
+				UserUniversity.get(function(response) {
+					if(response.status == 200) {
+						$scope.university = response.data.university;
+						deferred.resolve();
+					}else {
+						deferred.reject();
+					}
+				});
+				return deferred.promise;
+			};
+
+			var promise = get_university();
+			promise.then(function(success) {
+				// Get all rsos this school has to offer
+				UniversityRso.get({universityid: $scope.university.id}, function(response) {
+					// console.log(response.data);
+					if(response.status == 200) {
+						$scope.available_rsos = response.data;
+						$scope.joinrso.name = $scope.available_rsos[0];
+					}
+				});
+
+				// Get all rsos that this student is a member of
+				UniversityRso.get({universityid: $scope.university.id, member: true}, function(response) {
+					if(response.status == 200) {
+						$scope.member_rsos = response.data;
+						// do some fancy manipulatoin to get desired results
+						angular.forEach($scope.member_rsos, function(value, key) {
+						  value.filter = value.name;
+						});
+						$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
+						$scope.rso.name = response.data[0];
+						// console.log($scope.member_rsos);
+					}
+					else
+						$scope.member_rsos = false;
+				});
+
+				UserEvent.get(function(response) {
+					// console.log(response);
+					if(response.status == 200)
+						$scope.events = response.data;
+				});
+
+			}, function(failure) {
+				console.log('how do you not have a university?!');
+			});
 		}
-	}]);
 
-	app.directive('leaderCreateEvent', [function() {
-		return {
-			restrict: 'E',
-			templateUrl: 'partials/leader/createEvent.html',
-			controller: function($scope, Event) {
-
-				// Check that user is logged in and verified
-				if($scope.authorized) {
+		$scope.openCreateEvent = function() {
+			var modalInstance = $modal.open({
+				size: 'lg',
+				templateUrl: 'partials/leader/createEvent.html',
+				controller: function($scope, $modalInstance, Event) {
 					$scope.event = {};
 					// Types to populate select
 					$scope.types = [
@@ -50,8 +141,7 @@
 					];
 					$scope.event.type = $scope.types[0];
 					$scope.event.visibility = $scope.visibilities[0];
-
-					// For date NOTE: this could be useful for our bootstrap.ui dropdown, to stop auto closing on document click
+					// Used for fancy ui.bootstrap widgets
 					$scope.open = function($event) {
 						$event.preventDefault();
 						$event.stopPropagation();
@@ -59,29 +149,32 @@
 					};
 					$scope.event.date = Date.now();
 					$scope.event.time = new Date().getTime();
-
-					$scope.create = function(event) {
-						var insert = event;
-						var original_date = event.date;
-						var date = new Date(event.date);
-						var time = new Date(event.time);
-						var datetime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
-						insert.date = datetime;
-						insert.type = event.type.type;
-						insert.visibility = event.visibility.visibility;
-
-						// NOTE don't care that time is still around, database doesn't use it
-						Event.save(insert, function(response) {
-							console.log(response);
-						});
-
-						// Do save here and response
-
-						// reset ALWAYS back to default values
+					
+					// close modal window after completion
+					$scope.close = function() {
+						$modalInstance.close();
 					};
 
+					$scope.create = function(rsop) {
+						// $scope.$parent.createEventSuccess = 'words!';
+						// $modalInstance.close();
+						Event.save(rsop, function(response) {
+							console.log(response);
+							if(response.status == 200) {
+								$scope.event = {};
+								$scope.event.type = $scope.types[0];
+								$scope.event.visibility = $scope.visibilities[0];
+								$scope.createEventError = false;
+								$scope.$parent.createEventSuccess = response.data.message;
+								$modalInstance.close();
+							}else{
+								$scope.createEventError = response.data.message;
+							}
+						});
+					};
 				}
-			}
+			});
 		};
 	}]);
+
 })();

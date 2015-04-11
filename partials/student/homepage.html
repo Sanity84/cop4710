@@ -2,6 +2,11 @@
 	<div class="col-sm-12">
 		<h1>Welcome, {{ firstname }}</h1>
 		<hr>
+		<div class="row" ng-show="rsoSuccess">
+			<div class="col-sm-12">
+				<div class="alert alert-success">{{ rsoSuccess }}<button class="close" ng-click="rsoSuccess=false">&times;</button></div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-sm-8">
 				<div class="panel panel-default">
@@ -15,7 +20,7 @@
 								<p ng-bind-html="event.description | unsafe"></p>
 								<p>
 								<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
-								<strong>Date: </strong> {{ event.date }}<br>
+								<strong>Date: </strong> {{ event.date | date:'short':'UTC' }}<br>
 								<strong>{{ event.visibility }} Event</strong><br>
 								<strong>Location</strong> {{ event.location }}<br>
 								<strong>Type</strong> {{ event.type }}<br>
@@ -59,24 +64,10 @@
 					<div class="panel-body">
 						<student-rsos></student-rsos>
 						<hr>
-						<button class="btn btn-warning btn-block btn-sm" data-toggle="modal" data-target="#propose">Propose New RSO</button>
+						<button class="btn btn-warning btn-block btn-sm" ng-click="openCreateRso()">Propose New RSO</button>
 					</div>
 				</div>
 				<available-rsos></available-rsos>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- Modal for proposal -->
-<div class="modal fade" id="propose" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">New RSO Proposal</h4>
-			</div>
-			<div class="modal-body">
-				<rsorequest></rsorequest>	
 			</div>
 		</div>
 	</div>

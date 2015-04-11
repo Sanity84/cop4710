@@ -1,21 +1,82 @@
-<h1>Welcome, {{ firstname }}</h1>	
-<div class="row">
-	<div class="col-md-8">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<leader-create-event></leader-create-event>
-			</div>
+<div class="row" ng-show="createEventSuccess">
+	<div class="col-sm-12">
+		<div class="alert alert-success">
+			{{ createEventSuccess }} moo
+			<button class="close" ng-click="createEventSuccess = false">&times;</button>
 		</div>
 	</div>
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<p class="lead">My RSOs</p>	
+</div>
+<div class="row">
+	<div class="col-sm-12">
+		<h1>Welcome, {{ firstname }}</h1>
+		<hr>
+		<div class="row" ng-show="eventSuccess">
+			<div class="col-sm-12">
+				<div class="alert alert-success">{{ reventSuccess }}<button class="close" ng-click="eventSuccess=false">&times;</button></div>
 			</div>
 		</div>
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<p class="lead">Join RSO</p>	
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<p class="lead">Upcoming {{ university.name }} and RSO Events</p>
+					</div>
+					<ul class="list-group">
+						<div ng-repeat="event in events | filter:rso.name.filter">
+							<li class="list-group-item">
+								<p class="lead">{{ event.name }}</p>
+								<p ng-bind-html="event.description | unsafe"></p>
+								<p>
+								<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
+								<strong>Date: </strong> {{ event.date | date:'short':'UTC' }}<br>
+								<strong>{{ event.visibility }} Event</strong><br>
+								<strong>Location</strong> {{ event.location }}<br>
+								<strong>Type</strong> {{ event.type }}<br>
+								<strong>Contact</strong> 
+								<strong>Phone:</strong> {{ event.contactphone }}<br>
+								<strong>Email:</strong> {{ event.contactemail }}<br>
+								<strong>Rating: </strong> {{ event.rating | number:1 }} stars
+								</p>
+								<p class="lead">Comments</p>
+								<table class="table table-hover" ng-show="event.comments">
+									<tr ng-repeat="comment in event.comments">
+										<td>
+											<div>
+												<!-- <button class="pull-right clearfix btn btn-success btn-sm" ng-show="comment.userid == userid">Edit</button> -->
+												<button style="margin-right: 5px;" class="pull-right clearfix btn btn-danger btn-sm" ng-show="comment.userid == userid" ng-click="deleteComment(comment, event)">Delete</button>
+											</div>
+											<p><strong>{{ comment.name }}</strong> @ {{ comment.created | date:'short':'UTC' }}<br>
+											<strong>Rated:</strong> {{ comment.rating }} stars<br>
+											{{ comment.body }}</p>
+										</td>
+									</tr>
+								</table>
+								<form ng-submit="addComment(comment, event)" class="form">
+									<div class="form-group">
+										<label for="rating" class="label-control">Rating</label>
+										<select ng-model="comment.rating" id="rating" class="form-control" ng-options="rating.display for rating in ratings"></select>
+									</div>
+									<div class="form-group">
+										<label for="comment" class="label-control">Comment</label>
+										<input ng-model="comment.body" id="comment" type="text" class="form-control">
+									</div>
+									<input type="submit" value="Add Comment" class="btn btn-primary">
+								</form>
+							</li>
+						</div>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<student-rsos></student-rsos>
+						<hr>
+						<p class="lead">RSO Leader options</p>
+						<button class="btn btn-warning btn-block btn-sm" ng-click="openCreateEvent()">Create RSO Event</button>
+					</div>
+				</div>
+				<available-rsos></available-rsos>
 			</div>
 		</div>
 	</div>
