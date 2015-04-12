@@ -128,7 +128,7 @@
 					$scope.visibilities = [
 						{
 							visibility: 'Public',
-							value: 'public',
+							value: 'public'
 						},
 						{
 							visibility: 'RSO Members Only',

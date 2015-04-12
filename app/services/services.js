@@ -31,7 +31,6 @@
 
 	}]);
 
-
 	app.factory('User', ['$resource', '$base64', function($resource, $base64) {
 		return {
 			resource: function(username, password) {
@@ -101,8 +100,6 @@
 		});
 	}]);
 
-	
-
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {
 			if(exdays !== null) {
@@ -134,5 +131,4 @@
 			return $sce.trustAsHtml(val);
 		};
 	});
-
 })();
