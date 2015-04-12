@@ -128,6 +128,21 @@
 		};
 	}]);
 
+	app.directive('addimage', [function() {
+		return {
+			restrict: 'E',
+			templateUrl: 'partials/admin/addimage.html',
+			controller: ["University", "$scope", function(University, $scope) {
+				$scope.create = [function() {
+					image = {};
+					image.name = $scope.name;
+					image.url = $scope.url;
+					University.image.save(image);
+				}];
+			}]
+		};
+	}]);
+
 	// TODO: Ensure this is working properly
 	app.directive('createProfile', [function() {
 		return {

@@ -55,7 +55,10 @@
 	}]);
 
 	app.factory('University', ['$resource', function($resource) {
-		return $resource('api/university/:id');
+		return {
+			resource: $resource('api/university/:id'),
+			image: $resource('api/university/image')
+		}
 	}]);
 
 	app.factory('UCFPublicEvents', ['$resource', function($resource) {

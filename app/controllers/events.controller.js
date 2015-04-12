@@ -8,7 +8,7 @@
 
 		$scope.filter = {};
 		$scope.events = [];
-		University.query(function(response) {
+		University.resource.query(function(response) {
 			// console.log(response);
 			$scope.universities = response;
 			$scope.filter.university = $scope.universities[0];
