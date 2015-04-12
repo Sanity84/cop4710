@@ -156,8 +156,10 @@
 					};
 
 					$scope.create = function(rsop) {
-						// $scope.$parent.createEventSuccess = 'words!';
-						// $modalInstance.close();
+						// Fix type and visibility
+						var insert = rsop;
+						insert.visibility = rsop.visibility.value;
+						insert.type = rsop.type.value;
 						Event.save(rsop, function(response) {
 							console.log(response);
 							if(response.status == 200) {

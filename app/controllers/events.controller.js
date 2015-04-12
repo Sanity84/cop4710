@@ -7,18 +7,16 @@
 		}
 
 		$scope.filter = {};
+		$scope.events = [];
 		University.query(function(response) {
 			// console.log(response);
 			$scope.universities = response;
 			$scope.filter.university = $scope.universities[0];
 		});
-		$scope.events = [];
+		
 		Event.query(function(response) {
 			$scope.events = response;
 		});
-		// UCFPublicEvents.query(function(response) {
-		// 	$scope.events = response;
-		// });
 	}]);
 
 	app.directive('googleMaps', [function() {
@@ -27,97 +25,47 @@
 			templateUrl: 'partials/events/googleMaps.html',
 			controller: function($scope) {
 
-				// Test data
-				var cities = [
-				    {
-				        city : 'Toronto',
-				        desc : 'This is the best city in the world!',
-				        lat : 43.7000,
-				        long : -79.4000
-				    },
-				    {
-				        city : 'New York',
-				        desc : 'This city is aiiiiite!',
-				        lat : 40.6700,
-				        long : -73.9400
-				    },
-				    {
-				        city : 'Chicago',
-				        desc : 'This is the second best city in the world!',
-				        lat : 41.8819,
-				        long : -87.6278
-				    },
-				    {
-				        city : 'Los Angeles',
-				        desc : 'This city is live!',
-				        lat : 34.0500,
-				        long : -118.2500
-				    },
-				    {
-				        city : 'Las Vegas',
-				        desc : 'Sin City...\'nuff said!',
-				        lat : 36.0800,
-				        long : -115.1522
-				    }
-				];
-				var userLocation;
+				navigator.geolocation.getCurrentPosition(function(position) {
+					// LOCATION SPOOFING TODO: REMOVE IN FINAL!!!
+					// var local_lat = position.coords.latitude,
+					// local_lng = position.coords.longitude;
+					// console.log('lat: ' + local_lat + ' :long ' + local_lng);
+					// 28.602432, -81.200264
+					var local_lat = 28.602432,
+					local_lng = -81.200264;
 
-				function showPosition(position) {
-					lat = position.coords.latitude;
-					lon = position.coords.longitude;
-					userLocation = new google.maps.LatLng(lat, lon);
-				}
+					// Do google map initialization here
+					var mapOptions = {
+				        zoom: 15,
+				        center: new google.maps.LatLng(local_lat, local_lng),
+				        mapTypeId: google.maps.MapTypeId.ROADMAP
+				    };
 
-				if (navigator.geolocation) {
-				    navigator.geolocation.getCurrentPosition(showPosition, showError);
-				} else { 
-				    x.innerHTML = "Geolocation is not supported by this browser.";
-				}
+				    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
+				    // Create markers for nearby events
+				    var addMarker = function(event) { 
+				    	var lat = event.location_lat, lng = event.location_lng;
+				    	console.log(event.name);
+				    	var marker = new google.maps.Marker({
+				    		map: $scope.map,
+				    		position: new google.maps.LatLng(lat, lng),
+				    		title: event.name
+				    	});
 
-				function showError() {
-					console.log('no auth');
-				}
-				
-				var mapOptions = {
-			        zoom: 4,
-			        // center: new google.maps.LatLng(40.0000, -98.0000),
-			        center: new google.maps.LatLng(40.0000, -98.0000),
-			        mapTypeId: google.maps.MapTypeId.TERRAIN
-			    };
+				    	var infoWindow = new google.maps.InfoWindow();
 
-			    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+				    	google.maps.event.addListener(marker, 'click', function(){
+				            infoWindow.setContent('<h4>' + marker.title + '</h4>');
+				            infoWindow.open($scope.map, marker);
+			        	});
+					};
 
-			    $scope.markers = [];
-			    
-			    var infoWindow = new google.maps.InfoWindow();
-			    
-			    var createMarker = function (info){
-			        
-			        var marker = new google.maps.Marker({
-			            map: $scope.map,
-			            position: new google.maps.LatLng(info.lat, info.long),
-			            title: info.city
-			        });
-			        marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
-			        
-			        google.maps.event.addListener(marker, 'click', function(){
-			            infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
-			            infoWindow.open($scope.map, marker);
-			        });
-			        
-			        $scope.markers.push(marker);
-			        
-			    };
-			    
-			    for (i = 0; i < cities.length; i++){
-			        createMarker(cities[i]);
-			    }
-
-			    $scope.openInfoWindow = function(e, selectedMarker){
-			        e.preventDefault();
-			        google.maps.event.trigger(selectedMarker, 'click');
-			    };
+				    var i, eventsLength = $scope.events.length;
+					for(i = 0; i < eventsLength; i++) {
+						addMarker($scope.events[i]);
+					}
+				});
 			}
 		};
 	}]);
