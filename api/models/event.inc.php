@@ -105,10 +105,10 @@ class Event extends Model {
 
 	public function getEvents() {
 		try {
-			$stmt = $this->db->prepare("SELECT E.*, UV.name university, R.name rso FROM events E 
+			$stmt = $this->db->prepare("SELECT E.*, UV.name university, R.name rso, DATE_FORMAT(E.date, '%Y-%m-%dT%TZ') date FROM events E 
 				LEFT OUTER JOIN universities UV ON UV.id=E.universityid
 				LEFT OUTER JOIN rsos R ON R.id=E.rsoid
-				WHERE E.visibility='public' AND E.date>NOW()");
+				WHERE E.visibility='public'"); // removed date / expire
 			$stmt->execute();
 			$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

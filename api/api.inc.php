@@ -358,7 +358,8 @@ class Api {
 	}
 
 	public function getUniversities() {
-		$query = sprintf("SELECT UV.id, UV.name, UV.email_domain FROM universities UV");
+		// $query = sprintf("SELECT UV.id, UV.name, UV.email_domain FROM universities UV");
+		$query = sprintf("SELECT * FROM universities");
 		$result = $this->db->query($query);
 		$universities = array();
 		while($row = $result->fetch_assoc())
