@@ -1,7 +1,7 @@
 (function(){
 	var app = angular.module('App.Student.Controller', []);
 
-	app.controller('StudentHomepageController', ['$scope', 'authorized', 'UserUniversity', '$q', 'UniversityRso', 'UserEvent', 'EventComment', '$modal', function($scope, authorized, UserUniversity, $q, UniversityRso, UserEvent, EventComment, $modal) {
+	app.controller('StudentHomepageController', ['$scope', 'authorized', 'User', '$q', 'UniversityRso', 'EventComment', '$modal', function($scope, authorized, User, $q, UniversityRso, EventComment, $modal) {
 		if(authorized) {
 			// initialize
 			$scope.university = {};
@@ -52,7 +52,7 @@
 			// Do all loads here!
 			var get_university = function() {
 				var deferred = $q.defer();
-				UserUniversity.get(function(response) {
+				User.university.get(function(response) {
 					if(response.status == 200) {
 						$scope.university = response.data.university;
 						deferred.resolve();
@@ -90,7 +90,7 @@
 						$scope.member_rsos = false;
 				});
 
-				UserEvent.get(function(response) {
+				User.event.get(function(response) {
 					// console.log(response);
 					if(response.status == 200)
 						$scope.events = response.data;
@@ -143,13 +143,13 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/student/availableRsos.html',
-			controller: function($scope, UserRso) {
+			controller: function($scope, User) {
 
 				$scope.join = function(joinrso) {
 					var rso = {
 						rsoid: joinrso.name.id
 					};
-					UserRso.save(rso, function(response) {
+					User.rso.save(rso, function(response) {
 						console.log(response);
 						if(status == 200) {
 							$scope.joinErrorMessage = false;

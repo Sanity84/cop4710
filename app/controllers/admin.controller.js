@@ -1,13 +1,13 @@
 (function(){
 	var app = angular.module('App.Admin.Controller', []);
 
-	app.controller('AdminHomepageController', ['$scope', 'UserUniversity', 'authorized', 'RsoRequest', '$q', function($scope, UserUniversity, authorized, RsoRequest, $q) {
+	app.controller('AdminHomepageController', ['$scope', 'User', 'authorized', 'RsoRequest', '$q', function($scope, User, authorized, RsoRequest, $q) {
 		if(authorized) {
 			var deferred = $q.defer();
 			// This just notifies the user if they have created a school profile, if not let them create one
 			$scope.noProfile = true;
 			var get_university = function() {
-				UserUniversity.get(function(response) {
+				User.university.get(function(response) {
 					if(response.status == 200) {
 						deferred.resolve();
 						$scope.noProfile = false;
@@ -107,7 +107,6 @@
 				});
 			};
 		}
-		
 	}]);
 
 	app.directive('rsorequests', [function() {
@@ -137,6 +136,7 @@
 					image = {};
 					image.name = $scope.name;
 					image.url = $scope.url;
+					//TODO add callbacks
 					University.image.save(image);
 				}];
 			}]

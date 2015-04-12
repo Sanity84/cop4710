@@ -1,8 +1,8 @@
 (function(){
 	var app = angular.module('App.Leader.Controller', ['ui.tinymce']);
 
-	app.controller('LeaderHomepageController', ['$scope', 'authorized', '$modal', 'UserUniversity', '$q', 'UniversityRso', 'UserEvent', 'EventComment', 
-		function($scope, authorized, $modal, UserUniversity, $q, UniversityRso, UserEvent, EventComment) {
+	app.controller('LeaderHomepageController', ['$scope', 'authorized', '$modal', 'User', '$q', 'UniversityRso', 'EventComment',
+		function($scope, authorized, $modal, User, $q, UniversityRso, EventComment) {
 		
 		if(authorized) {
 			// initialize
@@ -54,7 +54,7 @@
 			// Do all loads here!
 			var get_university = function() {
 				var deferred = $q.defer();
-				UserUniversity.get(function(response) {
+				User.university.get(function(response) {
 					if(response.status == 200) {
 						$scope.university = response.data.university;
 						deferred.resolve();
@@ -92,7 +92,7 @@
 						$scope.member_rsos = false;
 				});
 
-				UserEvent.get(function(response) {
+				User.event.get(function(response) {
 					// console.log(response);
 					if(response.status == 200)
 						$scope.events = response.data;

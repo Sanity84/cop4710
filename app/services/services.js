@@ -28,7 +28,6 @@
 			this.firstname = null;
 			Cookie.put('session', '', -1);
 		};
-
 	}]);
 
 	app.factory('User', ['$resource', '$base64', function($resource, $base64) {
@@ -42,16 +41,15 @@
 						}
 					}
 				});
-			}
+			},
+			university: $resource('api/user/university'),
+			event: $resource('api/user/event'),
+			rso: $resource('api/user/rso')
 		};
 	}]);
 
 	app.factory('SessionAPI', ['$resource', function($resource) {
 		return $resource('api/session');
-	}]);
-
-	app.factory('UserUniversity', ['$resource', function($resource) {
-		return $resource('api/user/university');
 	}]);
 
 	app.factory('University', ['$resource', function($resource) {
@@ -85,16 +83,6 @@
 	// if member is any value this will retrieve a logged in users rsos that they are a member in, else just the schools rsos
 	app.factory('UniversityRso', ['$resource', function($resource) {
 		return $resource('api/university/:universityid/rso/:member');
-	}]);
-
-	// User can join a rso
-	app.factory('UserRso', ['$resource', function($resource) {
-		return $resource('api/user/rso');
-	}]);
-
-	// Retrieve all events that the user is a member of and the schools
-	app.factory('UserEvent', ['$resource', function($resource) {
-		return $resource('api/user/event');
 	}]);
 
 	app.factory('EventComment', ['$resource', function($resource) {
