@@ -53,30 +53,30 @@ class Api {
 	public function createUser($credentials) {
 		// Sanitize
 		
-		if(!$credentials['firstname']) { $this->ERROR['data']['message'] = 'Firstname required'; return $this->ERROR; }
+		if(!isset($credentials['firstname'])) { $this->ERROR['data']['message'] = 'Firstname required'; return $this->ERROR; }
 		if(strlen($credentials['firstname']) > 20) {$this->ERROR['data']['message'] = 'First name must be less than 20 characters'; return $this->ERROR; }
 		$credentials['firstname'] = $this->db->real_escape_string($credentials['firstname']);
 		
-		if(!$credentials['lastname']) { $this->ERROR['data']['message'] = 'Lastname required'; return $this->ERROR; }
+		if(!isset($credentials['lastname'])) { $this->ERROR['data']['message'] = 'Lastname required'; return $this->ERROR; }
 		if(strlen($credentials['lastname']) > 20) {$this->ERROR['data']['message'] = 'Last name must be less than 20 characters'; return $this->ERROR; }
 		$credentials['lastname'] = $this->db->real_escape_string($credentials['lastname']);
 		
-		if(!$credentials['email']) { $this->ERROR['data']['message'] = 'Email required'; return $this->ERROR; }
+		if(!isset($credentials['email'])) { $this->ERROR['data']['message'] = 'Email required'; return $this->ERROR; }
 		if(!filter_var($credentials['email'], FILTER_VALIDATE_EMAIL)) {$this->ERROR['data']['message'] = 'Please enter a valid email'; return $this->ERROR; }
 		$credentials['email'] = strtolower($this->db->real_escape_string($credentials['email']));
 		
-		if(!$credentials['username']) {$this->ERROR['data']['message'] = 'Username required'; return $this->ERROR;}
+		if(!isset($credentials['username'])) {$this->ERROR['data']['message'] = 'Username required'; return $this->ERROR;}
 		if(strlen($credentials['username']) > 30) {$this->ERROR['data']['message'] = 'Username must be less than 30 characters'; return $this->ERROR; }
 		$credentials['username'] = strtolower($this->db->real_escape_string($credentials['username']));
 		
 		
-		if(!$credentials['password']) { $this->ERROR['data']['message'] = 'Password required'; return $this->ERROR; }
+		if(!isset($credentials['password'])) { $this->ERROR['data']['message'] = 'Password required'; return $this->ERROR; }
 		if(strlen($credentials['password']) < 8) {$this->ERROR['data']['message'] = 'Password must be at least 8 characters'; return $this->ERROR; }
 		$credentials['password'] = $this->db->real_escape_string($credentials['password']);
 		
 
 		
-		if(!$credentials['role']) { $this->ERROR['data']['message'] = 'Role required'; return $this->ERROR; }
+		if(!isset($credentials['role'])) { $this->ERROR['data']['message'] = 'Role required'; return $this->ERROR; }
 		$credentials['role'] = $this->db->real_escape_string($credentials['role']);
 		
 		if($credentials['role'] == 'student') { // If the role is a student!
@@ -165,7 +165,7 @@ class Api {
 	}
 
 	public function getUser($username, $password) {
-		if(!$username || !$password) {
+		if(!isset($username) || !isset($password)) {
 			$this->ERROR['data']['message'] = 'Username / Password required';
 			return $this->ERROR;
 		}
@@ -324,16 +324,16 @@ class Api {
 		// Sanatize
 		$session_key = $this->db->real_escape_string($session_key);
 		
-		if(!$university['name']) { $this->ERROR['data']['message'] = 'University name cannot be blank'; return $this->ERROR; }
+		if(!isset($university['name'])) { $this->ERROR['data']['message'] = 'University name cannot be blank'; return $this->ERROR; }
 		$university['name'] = $this->db->real_escape_string($university['name']);
 		
-		if(!$university['location']) { $this->ERROR['data']['message'] = 'University location cannot be blank'; return $this->ERROR; }
+		if(!isset($university['location'])) { $this->ERROR['data']['message'] = 'University location cannot be blank'; return $this->ERROR; }
 		$university['location'] = $this->db->real_escape_string($university['location']);
 		
-		if(!$university['email_domain']) { $this->ERROR['data']['message'] = 'Student email domain cannot be empty'; return $this->ERROR; }
+		if(!isset($university['email_domain'])) { $this->ERROR['data']['message'] = 'Student email domain cannot be empty'; return $this->ERROR; }
 		$university['email_domain'] = $this->db->real_escape_string($university['email_domain']);
 		
-		if(!$university['description']) { $this->ERROR['data']['message'] = 'University description cannot be blank'; return $this->ERROR; }
+		if(!isset($university['description'])) { $this->ERROR['data']['message'] = 'University description cannot be blank'; return $this->ERROR; }
 		$university['description'] = $this->db->real_escape_string($university['description']);
 
 		// Verify user status
@@ -417,29 +417,29 @@ class Api {
 
 	public function createRsoRequest($rso, $session_key) {
 		// Sanitize 
-		if(!$session_key) { $this->ERROR['data']['message'] = 'Must be logged in'; return $this->ERROR; }
+		if(!isset($session_key)) { $this->ERROR['data']['message'] = 'Must be logged in'; return $this->ERROR; }
 		$session_key = $this->db->real_escape_string($session_key);
-		if(!$rso['name']) { $this->ERROR['data']['message'] = 'RSO requires name'; return $this->ERROR; }
+		if(!isset($rso['name'])) { $this->ERROR['data']['message'] = 'RSO requires name'; return $this->ERROR; }
 		$rso['name'] = $this->db->real_escape_string($rso['name']);
-		if(!$rso['description']) { $this->ERROR['data']['message'] = 'RSO description reaquired'; return $this->ERROR; }
+		if(!isset($rso['description'])) { $this->ERROR['data']['message'] = 'RSO description reaquired'; return $this->ERROR; }
 		$rso['description'] = $this->db->real_escape_string($rso['description']);
-		if(!$rso['type']) { $this->ERROR['data']['message'] == 'RSO type required'; return $this->ERROR; }
+		if(!isset($rso['type'])) { $this->ERROR['data']['message'] == 'RSO type required'; return $this->ERROR; }
 		$rso['type'] = $this->db->real_escape_string($rso['type']);
-		if(!$rso['leader']) { $this->ERROR['data']['message'] = 'RSO leader email required'; return $this->ERROR; }
+		if(!isset($rso['leader'])) { $this->ERROR['data']['message'] = 'RSO leader email required'; return $this->ERROR; }
 		$rso['leader'] = $this->db->real_escape_string($rso['leader']);
-		if(!$rso['member1']) { $this->ERROR['data']['message'] = 'RSO member 1 email required'; return $this->ERROR; }
+		if(!isset($rso['member1'])) { $this->ERROR['data']['message'] = 'RSO member 1 email required'; return $this->ERROR; }
 		$rso['member1'] = $this->db->real_escape_string($rso['member1']);
-		if(!$rso['member2']) { $this->ERROR['data']['message'] = 'RSO member 2 email required'; return $this->ERROR; }
+		if(!isset($rso['member2'])) { $this->ERROR['data']['message'] = 'RSO member 2 email required'; return $this->ERROR; }
 		$rso['member2'] = $this->db->real_escape_string($rso['member2']);
-		if(!$rso['member3']) { $this->ERROR['data']['message'] = 'RSO member 3 email required'; return $this->ERROR; }
+		if(!isset($rso['member3'])) { $this->ERROR['data']['message'] = 'RSO member 3 email required'; return $this->ERROR; }
 		$rso['member3'] = $this->db->real_escape_string($rso['member3']);
-		if(!$rso['member4']) { $this->ERROR['data']['message'] = 'RSO member 4 email required'; return $this->ERROR; }
+		if(!isset($rso['member4'])) { $this->ERROR['data']['message'] = 'RSO member 4 email required'; return $this->ERROR; }
 		$rso['member4'] = $this->db->real_escape_string($rso['member4']);
-		if(!$rso['member5']) { $this->ERROR['data']['message'] = 'RSO member 5 email required'; return $this->ERROR; }
+		if(!isset($rso['member5'])) { $this->ERROR['data']['message'] = 'RSO member 5 email required'; return $this->ERROR; }
 		$rso['member5'] = $this->db->real_escape_string($rso['member5']);
-		if(!$rso['universityid']) { $this->ERROR['data']['message'] = 'Invalid university'; return $this->ERROR; }
+		if(!isset($rso['universityid'])) { $this->ERROR['data']['message'] = 'Invalid university'; return $this->ERROR; }
 		$rso['universityid'] = $this->db->real_escape_string($rso['universityid']);
-		if(!$rso['email_domain']) { $this->ERROR['data']['message'] = 'Invalid email domain'; return $this->ERROR; }
+		if(!isset($rso['email_domain'])) { $this->ERROR['data']['message'] = 'Invalid email domain'; return $this->ERROR; }
 		$rso['email_domain'] = $this->db->real_escape_string($rso['email_domain']);
 
 		// Look up respective user id's of these emails!
@@ -483,7 +483,7 @@ class Api {
 
 	// Continue here !
 	public function getRsoRequests($session_key) {
-		if(!$session_key) { $this->ERROR['data']['message'] = 'Authorization required'; return $this->ERROR; }
+		if(!isset($session_key)) { $this->ERROR['data']['message'] = 'Authorization required'; return $this->ERROR; }
 		$session_key = $this->db->real_escape_string($session_key);
 
 		// Validate user is indeed an admin, and get their associated data of goodness
@@ -522,9 +522,9 @@ class Api {
 
 	public function createRso($session_key, $rso) {
 		
-		if(!$session_key) { $this->NOAUTH['data']['message'] = 'Not authorized'; return $this->NOAUTH; }
+		if(!isset($session_key)) { $this->NOAUTH['data']['message'] = 'Not authorized'; return $this->NOAUTH; }
 		$session_key = $this->db->real_escape_string($session_key);
-		if(!$rso['id']) { $this->ERROR['data']['message'] = 'Missing rsorequest id'; return $this->ERROR; }
+		if(!isset($rso['id'])) { $this->ERROR['data']['message'] = 'Missing rsorequest id'; return $this->ERROR; }
 		$rso['id'] = (int)$rso['id'];
 		$rsoid = $rso['id'];
 		$query = sprintf("SELECT U.role FROM sessions S LEFT OUTER JOIN users U ON U.id=S.userid WHERE S.session='%s' AND S.expire>NOW() LIMIT 1", $session_key);
