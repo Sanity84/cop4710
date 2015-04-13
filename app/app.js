@@ -38,10 +38,10 @@
 		// Routing routes
 		$routeProvider.when('/events',{
 			templateUrl: 'partials/events/events.html',
-			controller: 'EventsController',
-			resolve: {
-				authorized: authorized
-			}
+			controller: 'EventsController'
+			// resolve: {
+			// 	authorized: authorized
+			// }
 		}).when('/adminHomepage',{
 			templateUrl: 'partials/admin/homepage.html',
 			controller: 'AdminHomepageController',

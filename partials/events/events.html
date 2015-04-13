@@ -2,7 +2,7 @@
 	<div class="col-sm-8">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<google-maps></google-maps>	
+				<div id="map"></div>
 			</div>
 		</div>
 	</div>
@@ -12,8 +12,8 @@
 				<p class="lead">Filter Events</p>
 				<!-- <input type="text" class="form-control" ng-model="filter"> -->
 				<button class="btn btn-primary btn-block" ng-click="getLocation()" style="margin-bottom: 10px;">Events Near Me</button>
-				<form class="form">
-					<div class="form-group" ng-submit="updateFilter(filterUniversity)">
+				<form class="form" ng-submit="updateFilter(filterUniversity)">
+					<div class="form-group">
 						<label for="university" class="label-control">University</label>
 						<select id="role" ng-model="filterUniversity" class="form-control" ng-options="university.name for university in universities">
 						</select>
@@ -29,13 +29,16 @@
 <div class="row">
 	<div class="col-sm-12">
 		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="event in (filteredEvents = (events | filter:{university: filter}))">
-				<p class="lead">{{ event.name }}</p>
+			<!-- <li class="list-group-item" ng-repeat="event in (filteredEvents = (events | filter:{university: filter}))"> -->
+			<li class="list-group-item" ng-repeat="event in filteredEvents">
+				<div id="anchor{{ event.id }}"></div>
+				<p class="lead">{{ event.name }} {{ event.date | date:'short':'UTC' }}</p>
 				<p ng-bind-html="event.description | unsafe"></p>
 				<p>
 				<strong>University</strong> {{ event.university }}<br>
 				<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
-				<strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br>
+				<!-- <strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br> -->
+				<strong>Location</strong> {{ event.location_name }}<br>
 				<strong>Type</strong> {{ event.type }}<br>
 				<span ng-hide="event.contactphone == null && event.contactemail == null"><strong>Contact</strong> </span>
 				<span ng-show="event.contactphone != null"><strong>Phone:</strong> {{ event.contactphone }}<br></span>
