@@ -11,7 +11,7 @@
 					if(response.status == 200) {
 						deferred.resolve();
 						$scope.noProfile = false;
-						// $scope.university = response.data.university;
+						$scope.university = response.data.university;
 					}else{
 						deferred.reject();
 					}
@@ -38,7 +38,6 @@
 				// Nothing gets called because parent failed
 			});
 
-			//TODO add this to event module instead
 			$scope.openCreateEvent = function() {
 				var modalInstance = $modal.open({
 					size: 'lg',
