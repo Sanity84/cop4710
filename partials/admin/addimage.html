@@ -1,0 +1,18 @@
+<p class="lead">Add Image</p>
+<div class="col-sm-4">
+    <form ng-submit="create()" class="form-horizontal">
+        <div class="form-group">
+            <label for="imagename" class="label-control col-sm-3">Name</label>
+            <div class="col-sm-9">
+                <input id="imagename" type="text" ng-model="image.name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="imageurl" class="label-control col-sm-3">URL</label>
+            <div class="col-sm-9">
+                <input id="imageurl" type="text" ng-model="image.url" class="form-control">
+            </div>
+        </div>
+        <input class="btn btn-success btn-block" type="submit" value="Create">
+    </form>
+</div>

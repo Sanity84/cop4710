@@ -28,9 +28,7 @@
 			this.firstname = null;
 			Cookie.put('session', '', -1);
 		};
-
 	}]);
-
 
 	app.factory('User', ['$resource', '$base64', function($resource, $base64) {
 		return {
@@ -43,7 +41,10 @@
 						}
 					}
 				});
-			}
+			},
+			university: $resource('api/user/university'),
+			event: $resource('api/user/event'),
+			rso: $resource('api/user/rso')
 		};
 	}]);
 
@@ -51,12 +52,11 @@
 		return $resource('api/session');
 	}]);
 
-	app.factory('UserUniversity', ['$resource', function($resource) {
-		return $resource('api/user/university');
-	}]);
-
 	app.factory('University', ['$resource', function($resource) {
-		return $resource('api/university/:id');
+		return {
+			resource: $resource('api/university/:id'),
+			image: $resource('api/university/image')
+		};
 	}]);
 
 	app.factory('UCFPublicEvents', ['$resource', function($resource) {
@@ -85,23 +85,11 @@
 		return $resource('api/university/:universityid/rso/:member');
 	}]);
 
-	// User can join a rso
-	app.factory('UserRso', ['$resource', function($resource) {
-		return $resource('api/user/rso');
-	}]);
-
-	// Retrieve all events that the user is a member of and the schools
-	app.factory('UserEvent', ['$resource', function($resource) {
-		return $resource('api/user/event');
-	}]);
-
 	app.factory('EventComment', ['$resource', function($resource) {
 		return $resource('api/event/:eventid/comment/:commentid', null, {
 			update: { method: 'PUT' }
 		});
 	}]);
-
-	
 
 	app.service('Cookie', function() {
 		this.put = function (cname, cvalue, exdays) {
@@ -134,5 +122,4 @@
 			return $sce.trustAsHtml(val);
 		};
 	});
-
 })();

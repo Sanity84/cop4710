@@ -68,7 +68,7 @@
 				$scope.register = {};
 				$scope.register.role = 'student'; // default
 
-				University.query(function(response) {
+				University.resource.query(function(response) {
 					$scope.universities = response;
 					$scope.register.school = $scope.universities[0];
 				});

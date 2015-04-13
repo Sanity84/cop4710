@@ -52,18 +52,33 @@ class Api {
 
 	public function createUser($credentials) {
 		// Sanitize
-		if(!$credentials['username']) {$this->ERROR['data']['message'] = 'Username required'; return $this->ERROR;}
-		$credentials['username'] = strtolower($this->db->real_escape_string($credentials['username']));
-		if(!$credentials['password']) { $this->ERROR['data']['message'] = 'Password required'; return $this->ERROR; }
-		$credentials['password'] = $this->db->real_escape_string($credentials['password']);
+		
 		if(!$credentials['firstname']) { $this->ERROR['data']['message'] = 'Firstname required'; return $this->ERROR; }
+		if(strlen($credentials['firstname']) > 20) {$this->ERROR['data']['message'] = 'First name must be less than 20 characters'; return $this->ERROR; }
 		$credentials['firstname'] = $this->db->real_escape_string($credentials['firstname']);
+		
 		if(!$credentials['lastname']) { $this->ERROR['data']['message'] = 'Lastname required'; return $this->ERROR; }
+		if(strlen($credentials['lastname']) > 20) {$this->ERROR['data']['message'] = 'Last name must be less than 20 characters'; return $this->ERROR; }
 		$credentials['lastname'] = $this->db->real_escape_string($credentials['lastname']);
+		
+		if(!$credentials['email']) { $this->ERROR['data']['message'] = 'Email required'; return $this->ERROR; }
+		if(!filter_var($credentials['email'], FILTER_VALIDATE_EMAIL)) {$this->ERROR['data']['message'] = 'Please enter a valid email'; return $this->ERROR; }
+		$credentials['email'] = strtolower($this->db->real_escape_string($credentials['email']));
+		
+		if(!$credentials['username']) {$this->ERROR['data']['message'] = 'Username required'; return $this->ERROR;}
+		if(strlen($credentials['username']) > 30) {$this->ERROR['data']['message'] = 'Username must be less than 30 characters'; return $this->ERROR; }
+		$credentials['username'] = strtolower($this->db->real_escape_string($credentials['username']));
+		
+		
+		if(!$credentials['password']) { $this->ERROR['data']['message'] = 'Password required'; return $this->ERROR; }
+		if(strlen($credentials['password']) < 8) {$this->ERROR['data']['message'] = 'Password must be at least 8 characters'; return $this->ERROR; }
+		$credentials['password'] = $this->db->real_escape_string($credentials['password']);
+		
+
+		
 		if(!$credentials['role']) { $this->ERROR['data']['message'] = 'Role required'; return $this->ERROR; }
 		$credentials['role'] = $this->db->real_escape_string($credentials['role']);
-		if(!$credentials['email']) { $this->ERROR['data']['message'] = 'Email required'; return $this->ERROR; }
-		$credentials['email'] = strtolower($this->db->real_escape_string($credentials['email']));
+		
 		if($credentials['role'] == 'student') { // If the role is a student!
 			if(!$credentials['universityid']) { $this->ERROR['data']['message'] == 'University id required'; return $this->ERROR; }
 			$credentials['universityid'] = $this->db->real_escape_string($credentials['universityid']);
@@ -308,14 +323,18 @@ class Api {
 	public function createUniversity($session_key, $university) {
 		// Sanatize
 		$session_key = $this->db->real_escape_string($session_key);
+		
 		if(!$university['name']) { $this->ERROR['data']['message'] = 'University name cannot be blank'; return $this->ERROR; }
 		$university['name'] = $this->db->real_escape_string($university['name']);
+		
 		if(!$university['location']) { $this->ERROR['data']['message'] = 'University location cannot be blank'; return $this->ERROR; }
 		$university['location'] = $this->db->real_escape_string($university['location']);
-		if(!$university['description']) { $this->ERROR['data']['message'] = 'University description cannot be blank'; return $this->ERROR; }
-		$university['description'] = $this->db->real_escape_string($university['description']);
+		
 		if(!$university['email_domain']) { $this->ERROR['data']['message'] = 'Student email domain cannot be empty'; return $this->ERROR; }
 		$university['email_domain'] = $this->db->real_escape_string($university['email_domain']);
+		
+		if(!$university['description']) { $this->ERROR['data']['message'] = 'University description cannot be blank'; return $this->ERROR; }
+		$university['description'] = $this->db->real_escape_string($university['description']);
 
 		// Verify user status
 		$query = sprintf("SELECT U.id, U.role, S.userid FROM users U LEFT OUTER JOIN sessions S ON S.userid=U.id WHERE S.session='%s' AND S.expire>NOW() LIMIT 1", $session_key);

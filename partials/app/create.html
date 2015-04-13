@@ -46,7 +46,7 @@
 	<div class="form-group" ng-show="register.role == 'student'">
 		<label for="school" class="label-control col-sm-3">School</label>
 		<div class="col-sm-9">
-			<select class="form-control" ng-model="register.school" ng-options="university.name for university in universities"></select>
+			<select id="school" class="form-control" ng-model="register.school" ng-options="university.name for university in universities"></select>
 		</div>
 	</div>
 	<input class="btn btn-success btn-block" type="submit" value="Create">

@@ -49,7 +49,7 @@
 		    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
 		    // Generate universities
-		    University.query(function(response) {
+		    University.resource.query(function(response) {
 		    	$scope.universities = response;
 		    	// filter defaults
 		    	$scope.filterUniversity = $scope.universities[0];
