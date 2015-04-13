@@ -34,14 +34,12 @@
 						$scope.comment.rating = $scope.ratings[4];
 						event.comments.push(response.data);
 					}else{
-						// console.log('NO!');
 						$scope.comment.rating = $scope.ratings[4];
 					}
 				});
 			};
 
 			$scope.deleteComment = function(comment, event) {
-			
 				var indexOfComment = event.comments.indexOf(comment);
 				EventComment.remove({eventid: event.id}, function(response) {
 					if(response.status == 200) {
@@ -97,7 +95,6 @@
 					if(response.status == 200)
 						$scope.events = response.data;
 				});
-
 			}, function(failure) {
 				console.log('how do you not have a university?!');
 			});
@@ -110,11 +107,11 @@
 				controller: function($scope, $modalInstance, Event) {
 					$scope.event = {};
 					// Types to populate select
+					//TODO(wil) should we add these to db?
 					$scope.types = [
 						{
 							type: 'Social',
 							value: 'social'
-
 						},
 						{
 							type: 'Fundraising',
@@ -178,5 +175,4 @@
 			});
 		};
 	}]);
-
 })();
