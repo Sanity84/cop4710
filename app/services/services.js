@@ -68,12 +68,12 @@
 		return $resource('api/getAllUsers');
 	}]);
 
-	app.factory('RsoRequest', ['$resource', function($resource) {
-		return $resource('api/rsorequest');
-	}]);
-
 	app.factory('Rso', ['$resource', function($resource) {
-		return $resource('api/rso');
+		return $resource('api/rso/:rsoid', null, {
+			update: {
+				method: 'PUT'
+			}
+		});
 	}]);
 
 	app.factory('Event', ['$resource', function($resource) {

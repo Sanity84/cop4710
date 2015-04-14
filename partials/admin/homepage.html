@@ -6,6 +6,12 @@
 	</div>
 </div>
 <div class="row" ng-hide="noProfile">
+	<div class="col-sm-12" ng-show="rsorequestMessage">
+		<div class="alert alert-success">
+			{{ rsorequestMessage }}
+			<button class="close" ng-click="rsorequestMessage = false">&times;</button>
+		</div>
+	</div>
 	<div class="col-sm-12">
 		<div ng-show="rsorequests">
 			<rsorequests></rsorequests>
@@ -65,6 +71,13 @@
 							</li>
 						</div>
 					</ul>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<button class="btn btn-primary btn-block" ng-click="openCreateEvent()">Create new event</button>
+					</div>
 				</div>
 			</div>
         </div>

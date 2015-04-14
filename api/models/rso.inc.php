@@ -146,7 +146,62 @@ class Rso extends Model {
 		}
 	}
 
+	public function getRsos($session_key) {
+		$stmt = $this->db->prepare("SELECT UV.id universityid FROM sessions S INNER JOIN universities UV ON UV.userid=S.userid WHERE S.session=:session AND S.expire>NOW() LIMIT 1");
+		$stmt->execute(array(':session' => $session_key));
+		$user = $stmt->fetch(PDO::FETCH_ASSOC);
+		if(!$user) {
+			$this->ERROR['data']['message'] = 'Not authorized';
+			return $this->ERROR;
+		}
+		$stmt = $this->db->prepare("SELECT * FROM rsos WHERE pending=true AND universityid=:universityid");
+		$stmt->execute(array(':universityid' => $user['universityid']));
+		$rsos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt_users = $this->db->prepare("SELECT U.id, CONCAT(U.firstname, ' ', U.lastname) name, U.email FROM rso_users RU INNER JOIN users U ON U.id=RU.userid WHERE RU.rsoid=:rsoid");
+
+		$rsos_complete = array();
+		for($i = 0; $i < count($rsos); $i++) {
+			$rsos_complete[$i] = $rsos[$i];
+			$stmt_users->execute(array(':rsoid' => $rsos[$i]['id']));
+			$members = $stmt_users->fetchAll(PDO::FETCH_ASSOC);
+			$rsos_complete[$i]['members'] = $members;
+		}
+		return $rsos_complete;
+	}
+
+	public function updateRso($rso, $session_key) {
+		$stmt = $this->db->prepare("SELECT UV.id universityid FROM sessions S INNER JOIN universities UV ON UV.userid=S.userid WHERE S.session=:session AND S.expire>NOW() LIMIT 1");
+		$stmt->execute(array(':session' => $session_key));
+		$user = $stmt->fetch(PDO::FETCH_ASSOC);
+		if(!$user) {
+			$this->ERROR['data']['message'] = 'Not authorized';
+			return $this->ERROR;
+		}
+
+		if($rso['update'] == 'accept') {
+			$stmt = $this->db->prepare("UPDATE rsos SET pending=false WHERE id=:rsoid");
+			$stmt->execute(array(':rsoid' => $rso['id']));
+			$stmt = $this->db->prepare("UPDATE users SET role='leader' WHERE id=:userid");
+			$stmt->execute(array(':userid' => $rso['leaderid']));
+			$this->OK['data']['message'] = 'Accepted RSO ';
+			return $this->OK;
+		}else if ($rso['update'] == 'reject'){
+			$stmt = $this->db->prepare("DELETE FROM rsos WHERE id=:rsoid");
+			$stmt->execute(array(':rsoid' => $rso['id']));
+			$this->OK['data']['message'] = 'Rejected RSO ';
+			return $this->OK;
+		}else{
+			$this->ERROR['data']['message'] = 'No update call given';
+			return $this->ERROR;
+		}
+	}
+
 }
+
+
+
+
+
 
 
 

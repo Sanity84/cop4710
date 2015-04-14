@@ -1,10 +1,11 @@
 (function(){
 	var app = angular.module('App.Leader.Controller', ['ui.tinymce']);
 
-	app.controller('LeaderHomepageController', ['$scope', 'authorized', '$modal', 'User', '$q', 'UniversityRso', 'EventComment',
-		function($scope, authorized, $modal, User, $q, UniversityRso, EventComment) {
-		
-		if(authorized) {
+	app.controller('LeaderHomepageController', ['$scope', 'authorized', '$modal', 'User', '$q', 'UniversityRso', 'EventComment', '$location',
+		function($scope, authorized, $modal, User, $q, UniversityRso, EventComment, $location) {
+		if(!authorized)
+			$location.url('/events');
+		// if(authorized) {
 			// initialize
 			$scope.university = {};
 			$scope.available_rsos = [];
@@ -98,7 +99,7 @@
 			}, function(failure) {
 				console.log('how do you not have a university?!');
 			});
-		}
+		// }
 
 		$scope.openCreateEvent = function() {
 			var modalInstance = $modal.open({

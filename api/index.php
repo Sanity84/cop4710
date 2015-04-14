@@ -84,26 +84,27 @@ $app->get('/university(/:id)', function($id = null) use ($app) {
 // 	$session_key = $app->getCookie('session');
 // 	echo json_encode($api->createRsoRequest($rso, $session_key), JSON_PRETTY_PRINT);
 // });
-$app->post('/rsorequest', function() use ($app) {
-	$rsorequest = new Rsorequest();
-	$session_key = $app->getCookie('session');
-	$rsorequest_details = json_decode($app->request->getBody(), true);
-	echo json_encode($rsorequest->createRsorequest($rsorequest_details, $session_key), JSON_PRETTY_PRINT);
-});
+// $app->post('/rsorequest', function() use ($app) {
+// 	$rsorequest = new Rsorequest();
+// 	$session_key = $app->getCookie('session');
+// 	$rsorequest_details = json_decode($app->request->getBody(), true);
+// 	echo json_encode($rsorequest->createRsorequest($rsorequest_details, $session_key), JSON_PRETTY_PRINT);
+// });
 
-$app->get('/rsorequest', function() use ($app) {
-	$api = new Api();
-	$session_key = $app->getCookie('session');
-	echo json_encode($api->getRsoRequests($session_key), JSON_PRETTY_PRINT);
-});
+// $app->get('/rsorequest', function() use ($app) {
+// 	$api = new Api();
+// 	$session_key = $app->getCookie('session');
+// 	echo json_encode($api->getRsoRequests($session_key), JSON_PRETTY_PRINT);
+// });
+
 
 // Admin approve RSO and make it legit
-$app->post('/rso', function() use ($app) {
-	$api = new Api();
-	$session_key = $app->getCookie('session');
-	$rso = json_decode($app->request->getBody(), true);
-	echo json_encode($api->createRso($session_key, $rso), JSON_PRETTY_PRINT);
-});
+// $app->post('/rso', function() use ($app) {
+// 	$api = new Api();
+// 	$session_key = $app->getCookie('session');
+// 	$rso = json_decode($app->request->getBody(), true);
+// 	echo json_encode($api->createRso($session_key, $rso), JSON_PRETTY_PRINT);
+// });
 
 //****************************************
 // NEW VERSION OF ORGANIZATION OF MODELS 
@@ -137,13 +138,14 @@ $app->get('/university/:university_id/rso/:rso_id/event/:private', function($uni
 	echo json_encode($event->getUniversityRsoEvents($university_id, $session_key), JSON_PRETTY_PRINT);
 });
 
-// Rso
+// Rso not a standard rest call, bleh
 $app->get('/university/:universityid/rso(/:member)', function($universityid = null, $member = false) use ($app) {
 	$rso = new Rso();
 	$session_key = $app->getCookie('session');
 	echo json_encode($rso->getUniversityRso($universityid, $session_key, $member), JSON_PRETTY_PRINT);
 });
 
+// student requested rso
 $app->post('/university/:universityid/rso', function($universityid = null) use ($app) {
 	$rso = new Rso();
 	$session_key = $app->getCookie('session');
@@ -151,6 +153,23 @@ $app->post('/university/:universityid/rso', function($universityid = null) use (
 	echo json_encode($rso->createUniversityRso($rso_details, $universityid, $session_key), JSON_PRETTY_PRINT);
 });
 
+// used for admins to view pending rsos, this should be what line 142 is about, oh well
+$app->get('/rso', function() use ($app) {
+	$rso = new Rso();
+	$session_key = $app->getCookie('session');
+	//using admin's session key for verification of this list
+	echo json_encode($rso->getRsos($session_key), JSON_PRETTY_PRINT);
+});
+
+// admin approve / reject rso
+$app->put('/rso', function($rsoid = null) use ($app) {
+	$rso = new Rso();
+	$session_key = $app->getCookie('session');
+	$rso_details = json_decode($app->request->getBody(), true);
+	echo json_encode($rso->updateRso($rso_details, $session_key), JSON_PRETTY_PRINT);
+});
+
+// Used for users to join existing rsos
 $app->post('/user/rso', function() use ($app) {
 	$rso = new Rso();
 	$rso_data = json_decode($app->request->getBody(), true);

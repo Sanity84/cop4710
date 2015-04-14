@@ -1,132 +1,134 @@
 (function(){
 	var app = angular.module('App.Admin.Controller', []);
 
-	app.controller('AdminHomepageController', ['$scope', 'User', 'authorized', 'RsoRequest', '$q', function($scope, User, authorized, RsoRequest, $q) {
-		if(authorized) {
-			var deferred = $q.defer();
-			// This just notifies the user if they have created a school profile, if not let them create one
-			$scope.noProfile = true;
-			var get_university = function() {
-				User.university.get(function(response) {
-					if(response.status == 200) {
-						deferred.resolve();
-						$scope.noProfile = false;
-						$scope.university = response.data.university;
-					}else{
-						deferred.reject();
-					}
-				});
-				return deferred.promise;
-			};
+	app.controller('AdminHomepageController', ['$scope', 'authorized', '$location', 'User', 'Rso', '$modal', function($scope, authorized, $location, User, Rso, $modal) {
+		if(!authorized)
+			return $location.url('/events');
+		$scope.noProfile = true; // Keeps track if a profile has been created
+		$scope.university = {};
+		$scope.rsorequests = [];
 
-			var get_rsorequests = function() {
-				RsoRequest.get(function(response) {
-					// sloppy but easier than rewrite
-					if(response.status == 200 && response.data != 'No new requests') {
-						console.log(response);
-						$scope.rsorequests = response.data;
-					}else{
-						// Reject something
-					}
+		User.university.get(function(response) {
+			if(response.status == 200) {
+				$scope.noProfile = false;
+				$scope.university = response.data.university;
+				// Retrieve rso requests
+				Rso.query(function(response) {
+					$scope.rsorequests = response;
 				});
-			};
-			// Get rso requests!
-			var promise = get_university();
-			promise.then(function(success) {
-				get_rsorequests();
-			}, function(failure) {
-				// Nothing gets called because parent failed
+				// Retrieve events for university
+			}
+		});
+
+		// TODO: complete, also maybe fix bug with close / open window removing mce editor?
+		$scope.openCreateEvent = function() {
+			var modalInstance = $modal.open({
+				size: 'lg',
+				templateUrl: 'partials/leader/createEvent.html',
+				controller: function($scope, $modalInstance, Event) {
+					$scope.event = {};
+					// Types to populate select
+					$scope.types = [
+						{
+							type: 'Social',
+							value: 'social'
+						},
+						{
+							type: 'Fundraising',
+							value: 'fundraising'
+						},
+						{
+							type: 'Tech Talk',
+							value: 'techtalk'
+						}
+					];
+					$scope.visibilities = [
+						{
+							visibility: 'Public',
+							value: 'public'
+						},
+						{
+							visibility: 'University Students Only',
+							value: 'student'
+						}
+					];
+					$scope.event.type = $scope.types[0];
+					$scope.event.visibility = $scope.visibilities[0];
+					// Used for fancy ui.bootstrap widgets
+					$scope.open = function($event) {
+						$event.preventDefault();
+						$event.stopPropagation();
+						$scope.opened = true;
+					};
+					$scope.event.date = Date.now();
+					$scope.event.time = new Date().getTime();
+
+					// close modal window after completion
+					$scope.close = function() {
+						$modalInstance.close();
+					};
+
+					$scope.create = function(rsop) {
+						Event.save(rsop, function(response) {
+							console.log(response);
+							if(response.status == 200) {
+								$scope.event = {};
+								$scope.event.type = $scope.types[0];
+								$scope.event.visibility = $scope.visibilities[0];
+								$scope.createEventError = false;
+								$scope.$parent.createEventSuccess = response.data.message;
+								$modalInstance.close();
+							}else{
+								$scope.createEventError = response.data.message;
+							}
+						});
+					};
+				}
 			});
-
-			$scope.openCreateEvent = function() {
-				var modalInstance = $modal.open({
-					size: 'lg',
-					templateUrl: 'partials/leader/createEvent.html',
-					controller: function($scope, $modalInstance, Event) {
-						$scope.event = {};
-						// Types to populate select
-						$scope.types = [
-							{
-								type: 'Social',
-								value: 'social'
-							},
-							{
-								type: 'Fundraising',
-								value: 'fundraising'
-							},
-							{
-								type: 'Tech Talk',
-								value: 'techtalk'
-							}
-						];
-						$scope.visibilities = [
-							{
-								visibility: 'Public',
-								value: 'public'
-							},
-							{
-								visibility: 'University Students Only',
-								value: 'student'
-							}
-						];
-						$scope.event.type = $scope.types[0];
-						$scope.event.visibility = $scope.visibilities[0];
-						// Used for fancy ui.bootstrap widgets
-						$scope.open = function($event) {
-							$event.preventDefault();
-							$event.stopPropagation();
-							$scope.opened = true;
-						};
-						$scope.event.date = Date.now();
-						$scope.event.time = new Date().getTime();
-
-						// close modal window after completion
-						$scope.close = function() {
-							$modalInstance.close();
-						};
-
-						$scope.create = function(rsop) {
-							// $scope.$parent.createEventSuccess = 'words!';
-							// $modalInstance.close();
-							Event.save(rsop, function(response) {
-								console.log(response);
-								if(response.status == 200) {
-									$scope.event = {};
-									$scope.event.type = $scope.types[0];
-									$scope.event.visibility = $scope.visibilities[0];
-									$scope.createEventError = false;
-									$scope.$parent.createEventSuccess = response.data.message;
-									$modalInstance.close();
-								}else{
-									$scope.createEventError = response.data.message;
-								}
-							});
-						};
-					}
-				});
-			};
-		}
+		};
 	}]);
-
-	app.directive('rsorequests', [function() {
+	
+	// Completed
+	app.directive('rsorequests', function() {
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/admin/rsorequests.html',
 			controller: function($scope, Rso) {
-				$scope.accept = function(id) {
-					Rso.save({id: id}, function(response) {
-						console.log(response);
+				$scope.rsorequestMessage = false;
+				$scope.accept = function(rso) {
+					var rsoIndex = $scope.rsorequests.indexOf(rso);
+					var update = {};
+					update.id = rso.id;
+					update.update = 'accept';
+					update.leaderid = rso.leaderid; // promote student to leader
+					Rso.update(update, function(response) {
+						$scope.rsorequestMessage = response.data.message;
+						if(response.status == 200) {
+							// splice array and show success message
+							$scope.rsorequests.splice(rso, 1);
+						}
 					});
-					console.log('accepted ' + id);
 				};
-				$scope.reject = function(id) {
-					console.log('rejected ' + id);
+
+				$scope.reject = function(rso) {
+					var rsoIndex = $scope.rsorequests.indexOf(rso);
+					var update = {};
+					update.id = rso.id;
+					update.update = 'reject';
+					// simply delete the request
+					Rso.update(update, function(response) {
+						$scope.rsorequestMessage = response.data.message;
+						if(response.status == 200) {
+							// splice array and show success message
+							$scope.rsorequests.splice(rso, 1);
+						}
+					});
 				};
 			}
 		};
-	}]);
+	});
 
-	app.directive('addimage', [function() {
+	app.directive('addimage', function() {
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/admin/addimage.html',
@@ -140,30 +142,29 @@
 				}];
 			}]
 		};
-	}]);
+	});
 
-	// TODO: Ensure this is working properly
-	app.directive('createProfile', [function() {
+	// Completed
+	app.directive('createProfile', function() {
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/admin/createProfile.html',
 			controller: function($scope, University) {
+				$scope.errorMessage_createprofile = false;
+
 				$scope.createProfile = function(school) {
-					University.save(school, function(response) {
+					University.resource.save(school, function(response) {
 						if(response.status == 200) {
 							$scope.noProfile = false;
-							// populate university
 							$scope.university = response.data;
-							$scope.school = {}; // clear out
 							$scope.errorMessage_createprofile = false;
-							// show success
 						}else{
-							// show error message
 							$scope.errorMessage_createprofile = response.data.message;
 						}
 					});
 				};
 			}
 		};
-	}]);
+	});
+
 })();
