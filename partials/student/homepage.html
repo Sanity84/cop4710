@@ -34,9 +34,9 @@
 								<!-- <strong>Location</strong> {{ event.location }}<br> -->
 								<strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br>
 								<strong>Type</strong> {{ event.type }}<br>
-								<strong>Contact</strong> 
-								<strong>Phone:</strong> {{ event.contactphone }}<br>
-								<strong>Email:</strong> {{ event.contactemail }}<br>
+								<span ng-hide="event.contactphone == null && event.contactemail == null"><strong>Contact</strong> </span>
+								<span ng-show="event.contactphone != null"><strong>Phone:</strong> {{ event.contactphone }}<br></span>
+								<span ng-show="event.contactemail != null"><strong>Email:</strong> {{ event.contactemail }}<br></span>
 								<strong>Rating: </strong> {{ event.rating | number:1 }} stars
 								</p>
 								<p class="lead">Comments</p>

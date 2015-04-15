@@ -8,8 +8,11 @@
 </div>
 <div class="row">
 	<div class="col-sm-12">
-		<h1>Welcome, {{ firstname }}</h1>
-		<hr>
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<h1 style="margin-top: 12px;">Welcome, {{ firstname }}</h1>	
+			</div>
+		</div>
 		<div class="row" ng-show="eventSuccess">
 			<div class="col-sm-12">
 				<div class="alert alert-success">{{ reventSuccess }}<button class="close" ng-click="eventSuccess=false">&times;</button></div>
@@ -39,9 +42,9 @@
 								<!-- <strong>Location</strong> {{ event.location }}<br> -->
 								<strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br>
 								<strong>Type</strong> {{ event.type }}<br>
-								<strong>Contact</strong> 
-								<strong>Phone:</strong> {{ event.contactphone }}<br>
-								<strong>Email:</strong> {{ event.contactemail }}<br>
+								<span ng-hide="event.contactphone == null && event.contactemail == null"><strong>Contact</strong> </span>
+								<span ng-show="event.contactphone != null"><strong>Phone:</strong> {{ event.contactphone }}<br></span>
+								<span ng-show="event.contactemail != null"><strong>Email:</strong> {{ event.contactemail }}<br></span>
 								<strong>Rating: </strong> {{ event.rating | number:1 }} stars
 								</p>
 								<p class="lead">Comments</p>

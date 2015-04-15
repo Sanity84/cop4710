@@ -113,7 +113,7 @@
 
 					// Setup default 'filter', this will grab all university and rso events
 					$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
-					$scope.rso.name = response.data[0]; // set deafult
+					$scope.rso.name = $scope.member_rsos[0]; // set deafult
 					$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
 					updateMarkers();
 				});
@@ -172,6 +172,85 @@
 				}
 				updateMarkers(oldMarkers);
 				$scope.$apply();
+			});
+		};
+
+		// Unique to leader, create a new rso event!
+		$scope.openCreateEvent = function() {
+			var modalInstance = $modal.open({
+				size: 'lg',
+				templateUrl: 'partials/leader/createEvent.html',
+				controller: function($scope, $modalInstance, Event) {
+					$scope.event = {};
+					// Types to populate select
+					//TODO(wil) should we add these to db?
+					$scope.types = [
+						{
+							type: 'Social',
+							value: 'social'
+						},
+						{
+							type: 'Fundraising',
+							value: 'fundraising'
+						},
+						{
+							type: 'Tech Talk',
+							value: 'techtalk'
+						}
+					];
+					$scope.visibilities = [
+						{
+							visibility: 'Public',
+							value: 'public'
+						},
+						{
+							visibility: 'RSO Members Only',
+							value: 'rso'
+						},
+						{
+							visibility: 'University Students Only',
+							value: 'student'
+						}
+					];
+					
+					$scope.event.type = $scope.types[0];
+					$scope.event.visibility = $scope.visibilities[0];
+					// Used for fancy ui.bootstrap widgets
+					$scope.open = function($event) {
+						$event.preventDefault();
+						$event.stopPropagation();
+						$scope.opened = true;
+					};
+
+					$scope.event.date = Date.now();
+					$scope.event.time = new Date().getTime();
+					
+					// close modal window after completion
+					$scope.close = function() {
+						tinymce.remove(); // destroy tinyMCE to recreate it on next render
+						$modalInstance.close();
+					};
+
+					$scope.create = function(rsop) {
+						// Fix type and visibility
+						var insert = rsop;
+						insert.visibility = rsop.visibility.value;
+						insert.type = rsop.type.value;
+						Event.save(rsop, function(response) {
+							console.log(response);
+							if(response.status == 200) {
+								$scope.event = {};
+								$scope.event.type = $scope.types[0];
+								$scope.event.visibility = $scope.visibilities[0];
+								$scope.createEventError = false;
+								$scope.$parent.createEventSuccess = response.data.message;
+								$modalInstance.close();
+							}else{
+								$scope.createEventError = response.data.message;
+							}
+						});
+					};
+				}
 			});
 		};
 
