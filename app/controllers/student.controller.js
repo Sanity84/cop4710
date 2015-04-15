@@ -21,6 +21,7 @@
 			];
 			$scope.comment = {};
 			$scope.comment.rating = $scope.ratings[4];
+			$scope.map = false;
 
 			$scope.addComment = function(comment, event) {
 				comment.rating = comment.rating.value;
@@ -92,8 +93,26 @@
 
 				User.event.get(function(response) {
 					// console.log(response);
-					if(response.status == 200)
+					if(response.status == 200) {
 						$scope.events = response.data;
+						var i, marker, infoWindow, content;
+						content = function(infoWindow, marker, event) {
+							infoWindow.setContent('<h4>' + marker.title + '</h4><p>' +  event.name + '</p>');
+							infoWindow.open($scope.map, marker);
+						};
+
+						// Load up markers for google map!
+						for(i = 0; i < $scope.events.length; i++) {
+							$scope.events[i].marker = new google.maps.Marker({
+								position: new google.maps.LatLng($scope.events[i].location_lat, $scope.events[i].location_lng),
+								title: $scope.events[i].location_name,
+								map: $scope.map
+							});
+
+							infoWindow = new google.maps.InfoWindow();
+					    	google.maps.event.addListener($scope.events[i].marker, 'click', content(infoWindow, $scope.events[i].marker, $scope.events[i]));
+						}
+					}
 				});
 
 			}, function(failure) {
@@ -170,42 +189,44 @@
 		return {
 			restrict: 'E',
 			templateUrl: 'partials/student/studentRsos.html',
-			controller: function($scope) {
-
+			controller: function($scope, filterFilter) {
+				
 			}
 		};
 	}]);
 
-	// app.directive('rsorequest', [function() {
-	// 	return {
-	// 		restrict: 'E',
-	// 		templateUrl: 'partials/student/rsorequest.html',
-	// 		controller: function($scope, UniversityRso) {
-	// 			$scope.rsop = {};
-	// 			$scope.rsop.type = 'club';
+	app.directive('googleMap', function() {
+		return {
+			restrict: 'A', // attribute
+			controller: function($scope) {
+				// Generate the map
+				var mapOptions = {
+			        zoom: 15,
+			        center: new google.maps.LatLng(28.602432, -81.200264),
+			        mapTypeId: google.maps.MapTypeId.ROADMAP
+			    };
 
-
-	// 			// Continue fixing this mess.. most likely just do an entire rewrite of the api call
-	// 			$scope.rsoCreate = function(rsop) {
-
-	// 				rsop.email_domain = $scope.university.email_domain;
-	// 				// console.log(rsop);
-	// 				UniversityRso.save({universityid: $scope.university.id}, rsop, function(response) {
-	// 					console.log(response);
-	// 					if(response.status == 200) {
-	// 						// close window
-	// 						// everythins is working as it should
-	// 						$scope.rsop = {};
-	// 						$scope.rsop.type = 'club';
-	// 					}else{
-	// 						$scope.rsoRequestError = response.data.message;
-	// 					}
-	// 				});
-
-	// 			};
-	// 		}
-	// 	};
-	// }]);
-
+			    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+			}
+		};
+	});
 
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

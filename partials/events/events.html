@@ -37,8 +37,8 @@
 				<p>
 				<strong>University</strong> {{ event.university }}<br>
 				<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
-				<!-- <strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br> -->
-				<strong>Location</strong> {{ event.location_name }}<br>
+				<strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br>
+				<!-- <strong>Location</strong> {{ event.location_name }}<br> -->
 				<strong>Type</strong> {{ event.type }}<br>
 				<span ng-hide="event.contactphone == null && event.contactemail == null"><strong>Contact</strong> </span>
 				<span ng-show="event.contactphone != null"><strong>Phone:</strong> {{ event.contactphone }}<br></span>

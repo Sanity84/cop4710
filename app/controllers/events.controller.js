@@ -1,7 +1,7 @@
 (function() {
 	var app = angular.module('App.Events.Controller', []);
 
-	app.controller('EventsController', ['$scope', 'Event', 'University', 'filterFilter', function($scope, Event, University, filterFilter) {
+	app.controller('EventsController', ['$scope', 'Event', 'University', 'filterFilter', '$window', function($scope, Event, University, filterFilter, $window) {
 		$scope.map = false;
 		$scope.events = [];
 		$scope.filteredEvents = [];
@@ -9,7 +9,7 @@
 
 		// Remove and update all markers on map
 		var updateMarkers = function(oldMarkers) {
-			var i, marker, infoWindow, content;
+			var i;
 
 			// remove old markers
 			if(oldMarkers) {
@@ -18,22 +18,29 @@
 					oldMarkers[i].marker = false;
 				}
 			}
+			var infoWindow = new google.maps.InfoWindow();
 
-			content = function(infoWindow, marker, event) {
-				infoWindow.setContent('<h4>' + marker.title + '</h4><p>' +  event.name + '</p>');
-				infoWindow.open($scope.map, marker);
-			};
-
-			for(i = 0; i < $scope.filteredEvents.length; i++) {
-				$scope.filteredEvents[i].marker = new google.maps.Marker({
-					position: new google.maps.LatLng($scope.filteredEvents[i].location_lat, $scope.filteredEvents[i].location_lng),
-					title: $scope.filteredEvents[i].location_name,
+			var new_marker = function(event) {
+				event.marker = new google.maps.Marker({
+					position: new google.maps.LatLng(event.location_lat, event.location_lng),
+					title: event.location_name,
 					map: $scope.map
 				});
 
-				infoWindow = new google.maps.InfoWindow();
-		    	google.maps.event.addListener($scope.filteredEvents[i].marker, 'click', content(infoWindow, $scope.filteredEvents[i].marker, $scope.filteredEvents[i]));
-			}
+		    	google.maps.event.addListener(event.marker, 'click', function() {
+		    		infoWindow.setContent('<h4>' + event.marker.title + '</h4><p>' +  event.name + '</p>');
+		    		infoWindow.open($scope.map, event.marker);
+		    	});
+			};
+
+			// Creating in loop creates bug, try calling a function to auto create all this fun
+			for(i = 0; i < $scope.filteredEvents.length; i++)
+				new_marker($scope.filteredEvents[i]);
+
+			// go to the first marker
+			if($scope.filteredEvents[0])
+				google.maps.event.trigger($scope.filteredEvents[0].marker, 'click');
+				
 		};
 
 		Event.query(function(response) {
@@ -60,20 +67,27 @@
 
 		// Callable methods
 		$scope.getLocation = function() {
-			var oldMarkers = $scope.filteredEvents;
-			$scope.filteredEvents = [];
+			
 			navigator.geolocation.getCurrentPosition(function(position) {
 				var local_lat = position.coords.latitude;
 				var local_lng = position.coords.longitude;
 				var latLng = new google.maps.LatLng(local_lat, local_lng);
+				var oldMarkers = $scope.filteredEvents;
 				var i;
+				$scope.filteredEvents = [];
 				$scope.map.setCenter(latLng);
-				for(i = 0; i < $scope.events.length; i++) {
-					// console.log(google.maps.geometry.spherical.computeDistanceBetween($scope.map.center, new google.maps.LatLng($scope.events[i].location_lat, $scope.events[i].location_lng)));
-					if(500 > google.maps.geometry.spherical.computeDistanceBetween($scope.map.center, new google.maps.LatLng($scope.events[i].location_lat, $scope.events[i].location_lng)))
+
+				var check_distance = function(event) {
+					// 1000 meters radius of the users location!
+					if(2000 > google.maps.geometry.spherical.computeDistanceBetween($scope.map.center, new google.maps.LatLng(event.location_lat, event.location_lng)))
 						$scope.filteredEvents.push($scope.events[i]);
+				};
+
+				for(i = 0; i < $scope.events.length; i++) {
+					check_distance($scope.events[0]);
 				}
 				updateMarkers(oldMarkers);
+				$scope.$apply();
 			});
 		};
 
@@ -81,6 +95,12 @@
 			var oldMarkers = $scope.filteredEvents;
 			$scope.filteredEvents = filterFilter($scope.events, {university: university.name});
 			updateMarkers(oldMarkers);
+		};
+
+		// used to open info window and scroll to top of page when a link is clicked on
+		$scope.openInfoWindow = function(marker){
+			$window.scrollTo(0,0);
+			google.maps.event.trigger(marker, 'click');
 		};
 	}]);
 })();
