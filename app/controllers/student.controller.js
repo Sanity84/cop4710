@@ -175,6 +175,44 @@
 			});
 		};
 
+		// Unique to students request to create RSO
+		$scope.openCreateRso = function() {
+			var modalInstance = $modal.open({
+				// size: 'lg',
+				templateUrl: 'partials/student/rsorequest.html',
+				controller: function($scope, $modalInstance, university) {
+					$scope.university = university;
+					$scope.rsop = {};  // this is set within the view, oops
+					$scope.rsop.type = 'club';
+
+					$scope.close = function() {
+						$modalInstance.close();
+					};
+
+					$scope.rsoCreate = function(rsop) {
+						rsop.email_domain = $scope.university.email_domain;
+						// console.log(rsop);
+						UniversityRso.save({universityid: $scope.university.id}, rsop, function(response) {
+							if(response.status == 200) {
+								$scope.rsoRequestError = false;
+								$scope.rsop = {};
+								$scope.rsop.type = 'club';
+								$scope.$parent.rsoSuccess = response.data.message;
+								$modalInstance.close();
+							}else{
+								$scope.rsoRequestError = response.data.message;
+							}
+						});
+					};
+				},
+				resolve: {
+					university: function() {
+						return $scope.university;
+					}
+				}
+			});
+		};
+
 	}]);
 
 	// Working fine
