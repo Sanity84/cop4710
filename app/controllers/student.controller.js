@@ -44,7 +44,6 @@
 		};
 
 		$scope.deleteComment = function(comment, event) {
-		
 			var indexOfComment = event.comments.indexOf(comment);
 			EventComment.remove({eventid: event.id}, function(response) {
 				if(response.status == 200) {
@@ -56,7 +55,6 @@
 		
 		var updateMarkers = function(oldMarkers) {
 			var i;
-
 			// remove old markers
 			if(oldMarkers) {
 				for(i = 0; i < oldMarkers.length; i++) {
@@ -113,7 +111,7 @@
 
 					// Setup default 'filter', this will grab all university and rso events
 					$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
-					$scope.rso.name = response.data[0]; // set deafult
+					$scope.rso.name = $scope.member_rsos[0]; // set deafult
 					$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
 					updateMarkers();
 				});
