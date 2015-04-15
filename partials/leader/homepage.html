@@ -19,10 +19,16 @@
 			<div class="col-sm-8">
 				<div class="panel panel-default">
 					<div class="panel-body">
+						<div google-map><div id="map"></div></div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-body">
 						<p class="lead">Upcoming {{ university.name }} and RSO Events</p>
 					</div>
 					<ul class="list-group">
-						<div ng-repeat="event in events | filter:rso.name.filter">
+						<!-- <div ng-repeat="event in events | filter:rso.name.filter"> -->
+						<div ng-repeat="event in filteredEvents">
 							<li class="list-group-item">
 								<p class="lead">{{ event.name }}</p>
 								<p ng-bind-html="event.description | unsafe"></p>
@@ -30,7 +36,8 @@
 								<span ng-show="event.rso != null"><strong>Presenting RSO</strong> {{ event.rso }}<br></span>
 								<strong>Date: </strong> {{ event.date | date:'short':'UTC' }}<br>
 								<strong>{{ event.visibility }} Event</strong><br>
-								<strong>Location</strong> {{ event.location }}<br>
+								<!-- <strong>Location</strong> {{ event.location }}<br> -->
+								<strong>Location</strong> <a href ng-click="openInfoWindow(event.marker)">{{ event.location_name }}</a><br>
 								<strong>Type</strong> {{ event.type }}<br>
 								<strong>Contact</strong> 
 								<strong>Phone:</strong> {{ event.contactphone }}<br>

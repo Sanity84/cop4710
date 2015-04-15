@@ -91,11 +91,18 @@
 			});
 		};
 
-		$scope.updateFilter = function(university) {
+		$scope.$watch('filterUniversity', function(university) {
 			var oldMarkers = $scope.filteredEvents;
 			$scope.filteredEvents = filterFilter($scope.events, {university: university.name});
 			updateMarkers(oldMarkers);
-		};
+		});
+
+		// button, just using $watch method now
+		// $scope.updateFilter = function(university) {
+		// 	var oldMarkers = $scope.filteredEvents;
+		// 	$scope.filteredEvents = filterFilter($scope.events, {university: university.name});
+		// 	updateMarkers(oldMarkers);
+		// };
 
 		// used to open info window and scroll to top of page when a link is clicked on
 		$scope.openInfoWindow = function(marker){
