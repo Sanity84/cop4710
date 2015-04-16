@@ -111,20 +111,7 @@
 
 	app.directive("imagecarousel", function() {
 		return {
-			templateUrl: 'partials/app/imagecarousel.html',
-			controller: ['$scope', 'University', function($scope, University) {
-				//interval at which the carousel rotates
-				$scope.myInterval = 4000;
-
-				var promise = University.image.getAll();
-				promise.then(function(response) {
-					/*
-					 Example:
-					 data = [{image: 'http://url.url/url'}, {image: 'http://otherurl.otherurl/otherurl'}]
-					 */
-					$scope.slides = response.data.images;
-				});
-			}]
+			templateUrl: 'partials/app/imagecarousel.html'
 		}
 	});
 

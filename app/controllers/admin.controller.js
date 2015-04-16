@@ -8,15 +8,20 @@
 		$scope.university = {};
 		$scope.rsorequests = [];
 
-		User.university.get(function(response) {
-			if(response.status == 200) {
+		$scope.university = User.university.get(function (response) {
+			if (response.status == 200) {
 				$scope.noProfile = false;
 				$scope.university = response.data.university;
+				var images = response.data.images;
 				// Retrieve rso requests
-				Rso.query(function(response) {
+				Rso.query(function (response) {
 					$scope.rsorequests = response;
 				});
 				// Retrieve events for university
+				$scope.slides = [];
+				for(var i = 0; i < images.length; i++) {
+					$scope.slides.push(images[i]);
+				}
 			}
 		});
 
@@ -86,7 +91,7 @@
 				}
 			});
 		};
-	}]);
+	}]);;
 	
 	// Completed
 	app.directive('rsorequests', function() {
@@ -133,13 +138,16 @@
 			restrict: 'E',
 			templateUrl: 'partials/admin/addimage.html',
 			controller: ["University", "$scope", function(University, $scope) {
-				$scope.create = [function() {
-					image = {};
-					image.name = $scope.name;
-					image.url = $scope.url;
+				$scope.create = function() {
+					var image = {};
+					image.name = this.name;
+					image.url = this.url;
+					image.universityid = $scope.university.id;
 					//TODO add callbacks
-					University.image.save(image);
-				}];
+					University.image.save(image).$promise.then(function(response) {
+					}, function (response) {
+					});
+				};
 			}]
 		};
 	});

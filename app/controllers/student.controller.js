@@ -56,6 +56,11 @@
 					if(response.status == 200) {
 						$scope.university = response.data.university;
 						deferred.resolve();
+						var images = response.data.images;
+						$scope.slides = [];
+						for(var i = 0; i < images.length; i++) {
+							$scope.slides.push(images[i]);
+						}
 					}else {
 						deferred.reject();
 					}

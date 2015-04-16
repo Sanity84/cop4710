@@ -244,7 +244,7 @@ class Api {
 		unset($administrator['password']);
 
 		// Get images
-		$query = sprintf("SELECT I.name, I.path FROM images I, image_universities IU WHERE IU.imageid=I.id AND IU.universityid=%d", $university['id']);
+		$query = sprintf("SELECT I.name, I.path FROM images I WHERE I.universityid=%d", $university['id']);
 		$results = $this->db->query($query);
 		$images = array();
 		while($row = $results->fetch_assoc())
@@ -412,6 +412,19 @@ class Api {
 		$this->OK['data']['university'] = $university;
 		$this->OK['data']['administrator'] = $administrator;
 		$this->OK['data']['images'] = $images;
+		return $this->OK;
+	}
+
+
+	public function addImage($session_key, $image) {
+		$query = sprintf("INSERT INTO images (path, name, universityid) VALUES ('%s', '%s', '%s')",
+			$image['url'],
+			$image['name'],
+			$image['universityid']
+		);
+		$this->db->query($query);
+
+		$this->OK['data'] = $image;
 		return $this->OK;
 	}
 
