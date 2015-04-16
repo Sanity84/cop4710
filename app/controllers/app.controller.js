@@ -40,7 +40,7 @@
 							$scope.loginUser = {};
 							$scope.errorMessage_login = false;
 							$rootScope.isCollapsed = true;
-
+							$rootScope.loggedin = true;
 							// Redirect user to respective page
 							switch(Session.role) {
 								case 'admin': $location.url('/adminHomepage'); break;
@@ -49,8 +49,7 @@
 								default: $location.url('/events'); break;
 							}
 						}else{
-							$rootScope.isCollapsed = false; // test bug fix
-							$scope.loggedin = false;
+							$rootScope.loggedin = false;
 							$scope.errorMessage_login = data.data.message;
 						}
 					});
@@ -113,7 +112,7 @@
 	app.directive("imagecarousel", function() {
 		return {
 			templateUrl: 'partials/app/imagecarousel.html'
-		}
+		};
 	});
 
 	app.controller('ListUsersController', ['$scope', 'GetAllUsers', 'authorized', function($scope, GetAllUsers, authorized) {
