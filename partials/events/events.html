@@ -21,7 +21,7 @@
 					<!-- <input class="btn btn-success btn-block" type="submit" value="Filter By University"> -->
 				</form>
 				<p class="lead" style="margin-top: 10px;">About</p>
-				<p>{{ filterUniversity.description }}</p>
+				<p ng-bind-html="filterUniversity.description | unsafe"></p>
 			</div>
 		</div>
 	</div>

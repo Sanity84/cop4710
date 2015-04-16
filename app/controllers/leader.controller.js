@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('App.Leader.Controller', ['ui.tinymce']);
+	var app = angular.module('App.Leader.Controller', []);
 
 	app.controller('LeaderHomepageController', ['$scope', 'authorized', 'User', 'UniversityRso', 'EventComment', '$modal', '$location', 'filterFilter', '$window', 
 		function($scope, authorized, User, UniversityRso, EventComment, $modal, $location, filterFilter, $window) {
@@ -230,14 +230,54 @@
 						tinymce.remove(); // destroy tinyMCE to recreate it on next render
 						$modalInstance.close();
 					};
-
+					// test
+					$scope.validation = false;
 					$scope.create = function(rsop) {
+
+						// There is probably a better way to do this, but this works for now feel free to fix ryan
+						if($scope.createEvent.location.$invalid) {
+							$scope.validation = 'Location cannot be empty';
+							return;
+						}
+						else if($scope.createEvent.locationlat.$invalid) {
+							$scope.validation = 'Location latitude cannot be empty';
+							return;
+						}
+						else if($scope.createEvent.locationlng.$invalid) {
+							$scope.validation = 'Location longitude cannot be empty';
+							return;
+						}
+						else if($scope.createEvent.name.$invalid) {
+							$scope.validation = 'Location name cannot be empty';
+							return;
+						}else if($scope.createEvent.description.$invalid) {
+							$scope.validation = 'Event description cannot be empty';
+							return;
+						}
+						else
+							$scope.validation = false;
+							
 						// Fix type and visibility
 						var insert = rsop;
 						insert.visibility = rsop.visibility.value;
 						insert.type = rsop.type.value;
-						Event.save(rsop, function(response) {
-							console.log(response);
+						// time and date must be convereted
+						var time = new Date(insert.time);
+						var date = new Date(insert.date); 
+						// month is derped need to + 1
+						date.setUTCMonth(date.getUTCMonth() + 1);
+
+						// manually configure this for mysql insertion
+						var mysql_datetime = 
+							date.getFullYear() + '-' + 
+							((date.getMonth() < 10) ? '0' + date.getMonth() : date.getMonth()) + '-' + 
+							((date.getDate() < 10) ? '0' + date.getDate() : date.getDate()) + ' ' +
+							((time.getHours() < 10) ? '0' + time.getHours() : time.getHours()) + ':' + 
+							((time.getMinutes() < 10) ? '0' + time.getMinutes() : time.getMinutes()) + ':00';
+
+						insert.date = mysql_datetime;
+						Event.save(insert, function(response) {
+							// console.log(response);
 							if(response.status == 200) {
 								$scope.event = {};
 								$scope.event.type = $scope.types[0];
@@ -247,6 +287,8 @@
 								$modalInstance.close();
 							}else{
 								$scope.createEventError = response.data.message;
+								// $scope.event.type = $scope.types[0];
+								// $scope.event.visibility = $scope.visibilities[0];
 							}
 						});
 					};

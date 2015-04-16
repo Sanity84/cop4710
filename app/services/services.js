@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('App.Services', ['ngResource', 'base64']);
+	var app = angular.module('App.Services', ['ngResource', 'base64', 'ui.tinymce']);
 
 	app.service('Session', ['$rootScope', 'Cookie', function($rootScope, Cookie) {
 		this.create = function(data) {

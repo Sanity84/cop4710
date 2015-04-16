@@ -2,8 +2,14 @@
 	Create Event<button class="close" ng-click="close()"><span>&times;</span></button>
 	<!-- <div class="clearfix"></div> -->
 </div>
+<style type="text/css">
+  input.ng-invalid.ng-touched {
+    border-color: red;
+  }
+</style>
 <div class="modal-body">
-	<form class="form" ng-submit="create(event)" novalidate>
+	<!-- <form name="createEvent" class="form" ng-submit="create(event)" novalidate> -->
+	<form name="createEvent" class="form" ng-submit="create(event)" novalidate>
 		<div class="form-group">
 			<label class="label-control" for="type">Type</label>
 			<select id="type" ng-model="event.type" class="form-control" 
@@ -18,7 +24,9 @@
 		</div>
 		<div class="form-group">
 			<label for="location" class="label-control">Location Name</label>
-			<input id="location" type="text" class="form-control" ng-model="event.location" required>
+			<input name="location" id="location" type="text" class="form-control" ng-model="event.location" required>
+			<!-- playing here -->
+			<!-- <div class="alert alert-danger" ng-show="createEvent.location.$invalid">No!</div> -->
 		</div>
 		<div class="form-group">
 			<div class="row">
@@ -29,11 +37,11 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<label for="locationlat" class="label-control">Location Latitude</label>
-					<input id="locationlat" type="text" class="form-control" ng-model="event.location_lat" required>	
+					<input name="locationlat" id="locationlat" type="text" class="form-control" ng-model="event.location_lat" required>	
 				</div>
 				<div class="col-sm-6">
 					<label for="locationlng" class="label-control">Location Longitude</label>
-					<input id="locationlng" type="text" class="form-control" ng-model="event.location_lng" required>	
+					<input name="locationlng" id="locationlng" type="text" class="form-control" ng-model="event.location_lng" required>	
 				</div>
 			</div>
 		</div>
@@ -47,11 +55,11 @@
 		</div>
 		<div class="form-group">
 			<label for="name" class="label-control">Event Name</label>
-			<input id="name" type="text" class="form-control" ng-model="event.name" required>
+			<input name="name" id="name" type="text" class="form-control" ng-model="event.name" required>
 		</div>
 		<div class="form-group">
 			<label for="description" class="label-control">Description</label>
-			<textarea data-ui-tinymce id="description" ng-model="event.description"></textarea>
+			<textarea name="description" data-ui-tinymce id="description" ng-model="event.description" required></textarea>
 			<!-- <textarea ui-tinymce="tinymceOptions" id="description" ng-model="event.description"></textarea> -->
 		</div>
 		<div class="form-group">
@@ -60,7 +68,7 @@
 					<div class="form-group">
 						<label for="date" class="label-control">Date</label>
 						<div class="input-group" style="margin-top: 45px;">
-						<input id="date" type="text" class="form-control" datepicker-popup="dd.MM.yyyy" ng-model="event.date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" close-text="Close" required>
+						<input id="date" type="text" class="form-control" datepicker-popup="dd.MM.yyyy" ng-model="event.date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" close-text="Close">
 							<span class="input-group-btn">
 								<button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 							</span>
@@ -75,6 +83,7 @@
 				</div>
 			</div>
 		</div>
-		<input type="submit" value="Create" class="btn btn-success btn-block">
+		<input type="submit" value="Create" ng-click="submitted = true" class="btn btn-success btn-block">
+		<div class="alert alert-danger" ng-show="validation" style="margin-top: 10px; margin-bottom: 0;">{{ validation }}</div>
 	</form>
 </div>
