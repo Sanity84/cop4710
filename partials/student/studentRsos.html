@@ -1,6 +1,8 @@
 <p class="lead">Filter Events</p>	
-<p ng-hide="member_rsos">You haven't joined any RSOs yet!</p>
-<div ng-show="member_rsos">
+<!-- <p ng-hide="member_rsos">You haven't joined any RSOs yet!</p>
+<div ng-show="member_rsos"> -->
+<div>
+	<button class="btn btn-primary btn-block" ng-click="getLocation()" style="margin-top: 0; margin-bottom: 10px;">Events Near Me</button>
 	<form class="form" ng-submit="view(rso)">
 		<div class="form-group">
 			<label for="rsoname" class="label-control">RSOs</label>
