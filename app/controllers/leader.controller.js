@@ -120,8 +120,8 @@
 					$scope.member_rsos.unshift({name: 'University Events', filter: null, description: 'University Events'});
 					$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
 					$scope.rso.name = $scope.member_rsos[0]; // set deafult
-					$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
-					updateMarkers();
+					// $scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
+					// updateMarkers();
 				});
 			}
 		});
@@ -145,7 +145,14 @@
 		$scope.$watch('rso.name', function(rso) {
 			if(rso) { // don't get too excited before data is received
 				var oldMarkers = $scope.filteredEvents;
-				$scope.filteredEvents = filterFilter($scope.events, {rso: rso.filter});
+				// $scope.filteredEvents = filterFilter($scope.events, {rso: rso.filter});
+				$scope.filteredEvents = filterFilter($scope.events, function(value, index) {
+					if(value.rso == rso.filter || rso.filter === '')
+						return true;
+					else if(value.rso != rso.filter && rso.filter === null && (value.visibility == 'student' || value.visibility == 'public'))
+						return true;
+					return false;
+				});
 				updateMarkers(oldMarkers);
 			}
 		});

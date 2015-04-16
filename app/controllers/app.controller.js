@@ -49,6 +49,7 @@
 								default: $location.url('/events'); break;
 							}
 						}else{
+							$rootScope.isCollapsed = false; // test bug fix
 							$scope.loggedin = false;
 							$scope.errorMessage_login = data.data.message;
 						}

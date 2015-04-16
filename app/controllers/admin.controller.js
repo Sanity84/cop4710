@@ -118,7 +118,7 @@
 							$scope.rsos.splice(index, 1);
 						}
 						$scope.rso.name = $scope.rsos[0]; // set deafult
-						$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
+						// $scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
 						// updateMarkers();
 					}
 				});
@@ -146,7 +146,11 @@
 		    };
 
 			$scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-			$scope.filteredEvents = filterFilter($scope.events, {rso: rso.filter});
+			// $scope.filteredEvents = filterFilter($scope.events, {rso: rso.filter});
+			// $scope.filteredEvents = filterFilter($scope.events, function(value, index) {
+			// 	// console.log(value.rso);
+			// 	console.log(rso.filter);
+			// });
 			updateMarkers(null);
 		});
 
@@ -156,7 +160,14 @@
 			if(rso) { // don't get too excited before data is received
 				//console.log($scope.events);
 				var oldMarkers = $scope.filteredEvents;
-				$scope.filteredEvents = filterFilter($scope.events, {rso: rso.filter});
+				// $scope.filteredEvents = filterFilter($scope.events, {rso: rso.filter});
+				$scope.filteredEvents = filterFilter($scope.events, function(value, index) {
+					if(value.rso == rso.filter || rso.filter === '')
+						return true;
+					else if(value.rso != rso.filter && rso.filter === null && (value.visibility == 'student' || value.visibility == 'public'))
+						return true;
+					return false;
+				});
 				updateMarkers(oldMarkers);
 			}
 		});
