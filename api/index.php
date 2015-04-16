@@ -69,6 +69,13 @@ $app->post('/university', function() use ($app) {
 	echo json_encode($api->createUniversity($session_key, $university), JSON_PRETTY_PRINT);
 });
 
+$app->post('/university/image', function() use ($app) {
+	$api = new Api();
+	$image = json_decode($app->request->getBody(), true);
+	$session_key = $app->getCookie('session');
+	echo json_encode($api->addImage($session_key, $image), JSON_PRETTY_PRINT);
+});
+
 // Public functions, anyone can access
 $app->get('/university(/:id)', function($id = null) use ($app) {
 	$api = new Api();

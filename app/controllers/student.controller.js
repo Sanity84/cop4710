@@ -90,6 +90,11 @@
 		User.university.get(function(response) {
 			if(response.status == 200) {
 				$scope.university = response.data.university;
+				var images = response.data.images;
+				$scope.slides = [];
+				for(var i = 0; i < images.length; i++) {
+					$scope.slides.push(images[i]);
+				}
 
 				// Get ALL available RSOs that the user may join in this university
 				UniversityRso.get({universityid: $scope.university.id}, function(response) {
