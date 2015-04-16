@@ -117,6 +117,7 @@
 					});
 
 					// Setup default 'filter', this will grab all university and rso events
+					$scope.member_rsos.unshift({name: 'University Events', filter: null, description: 'University Events'});
 					$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
 					$scope.rso.name = $scope.member_rsos[0]; // set deafult
 					$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
@@ -167,7 +168,7 @@
 				$scope.map.setCenter(latLng);
 
 				var check_distance = function(event) {
-					// 1000 meters radius of the users location!
+					// 2000 meters radius of the users location!
 					if(2000 > google.maps.geometry.spherical.computeDistanceBetween($scope.map.center, new google.maps.LatLng(event.location_lat, event.location_lng)))
 						$scope.filteredEvents.push($scope.events[i]);
 				};
@@ -187,6 +188,7 @@
 				templateUrl: 'partials/leader/createEvent.html',
 				controller: function($scope, $modalInstance, Event) {
 					$scope.event = {};
+					tinymce.remove(); // destroy tinyMCE to recreate it on next render 
 					// Types to populate select
 					//TODO(wil) should we add these to db?
 					$scope.types = [
@@ -232,7 +234,6 @@
 					
 					// close modal window after completion
 					$scope.close = function() {
-						tinymce.remove(); // destroy tinyMCE to recreate it on next render
 						$modalInstance.close();
 					};
 					// test

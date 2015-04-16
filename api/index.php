@@ -196,6 +196,12 @@ $app->get('/user/event', function() use ($app) {
 	echo json_encode($event->getUserEvents($session_key), JSON_PRETTY_PRINT);
 });
 
+$app->get('/user/adminevent', function() use ($app) {
+	$event = new Event();
+	$session_key = $app->getCookie('session');
+	echo json_encode($event->getUserAdminEvents($session_key), JSON_PRETTY_PRINT);
+});
+
 // Comments
 // Create new comment
 $app->post('/event/:eventid/comment', function($eventid = null) use ($app) {

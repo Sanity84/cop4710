@@ -44,6 +44,7 @@
 			},
 			university: $resource('api/user/university'),
 			event: $resource('api/user/event'),
+			adminevent: $resource('api/user/adminevent'),
 			rso: $resource('api/user/rso')
 		};
 	}]);

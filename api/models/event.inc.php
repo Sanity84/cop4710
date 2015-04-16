@@ -103,6 +103,52 @@ class Event extends Model {
 		}// P, M, U
 	}
 
+	// get all rsos and events for this admin user
+	public function getUserAdminEvents($session_key) {
+		try {
+			// retrieve ALL events that this user is eldigble to view
+			$stmt = $this->db->prepare("SELECT S.userid, U.role FROM sessions S INNER JOIN users U ON U.id=S.userid WHERE S.session=:session AND S.expire>NOW() LIMIT 1");
+			$stmt->execute(array(':session' => $session_key));
+			$user = $stmt->fetch(PDO::FETCH_ASSOC);
+			if(!$user || $user['role'] != 'admin') {
+				$this->NOAUTH['data']['message'] = 'Not authorized';
+				return $this->NOAUTH;
+			}
+
+			$stmt = $this->db->prepare("SELECT DISTINCT E.*, R.name rso, DATE_FORMAT(E.date, '%Y-%m-%dT%TZ') date FROM users U
+				INNER JOIN universities UV ON UV.userid=U.id
+				INNER JOIN events E ON E.universityid=UV.id
+				LEFT OUTER JOIN rsos R ON R.id=E.rsoid
+				WHERE U.id=:userid ORDER BY E.date ASC");
+
+			$stmt->execute(array(':userid' => $user['userid']));
+			$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			if(!$events) {
+				$this->ERROR['data']['message'] = 'No events found';
+				return $this->ERROR;
+			}
+
+			$events_and_comments = array();
+			// loop and get ids to do queries for comments
+			$stmt = $this->db->prepare("SELECT CONCAT(U.firstname, ' ', U.lastname) name, C.*, DATE_FORMAT(C.created, '%Y-%m-%dT%TZ') created FROM comments C
+				INNER JOIN users U ON U.id=C.userid 
+				WHERE C.eventid=:eventid");
+			foreach($events as $event) {
+				$stmt->execute(array(':eventid' => $event['id']));
+				$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+				$events_and_comments[$event['id']] = $event;
+				$events_and_comments[$event['id']]['comments'] = $comments;
+			}
+
+
+			$this->OK['data'] = array_values($events_and_comments);
+			return $this->OK;
+		}catch(PDOExecption $e) {
+			$this->ERROR['data']['message'] = $e;
+			return $this->ERROR;
+		}// P, M, U
+	}
+ 
 	public function getEvents() {
 		try {
 			$stmt = $this->db->prepare("SELECT E.*, UV.name university, R.name rso, DATE_FORMAT(E.date, '%Y-%m-%dT%TZ') date FROM events E 

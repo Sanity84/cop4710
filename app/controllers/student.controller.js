@@ -88,6 +88,7 @@
 
 		// Students receieve their events from their association with their university
 		User.university.get(function(response) {
+			console.log(response);
 			if(response.status == 200) {
 				$scope.university = response.data.university;
 				var images = response.data.images;
@@ -115,6 +116,7 @@
 					});
 
 					// Setup default 'filter', this will grab all university and rso events
+					$scope.member_rsos.unshift({name: 'University Events', filter: null, description: 'University Events'});
 					$scope.member_rsos.unshift({name: 'All Events', filter: '', description: 'All Events and RSOs you are a member of'});
 					$scope.rso.name = $scope.member_rsos[0]; // set deafult
 					$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
