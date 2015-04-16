@@ -31,7 +31,7 @@
 			comment.rating = comment.rating.value;
 			comment.eventid = event.id;
 			EventComment.save({eventid: event.id}, comment, function(response) {
-				console.log(response);
+				// console.log(response);
 				if(response.status == 200) {
 					$scope.comment = {};
 					$scope.comment.rating = $scope.ratings[4];

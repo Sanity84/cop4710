@@ -103,7 +103,7 @@
 				UniversityRso.get({universityid: $scope.university.id}, function(response) {
 					if(response.status == 200) {
 						$scope.rsos = response.data;
-						// console.log($scope.rsos);
+						
 						// Always create an array
 						angular.forEach($scope.rsos, function(value, key) {
 						  value.filter = value.name;
@@ -112,6 +112,11 @@
 						// Setup default 'filter', this will grab all university and rso events
 						$scope.rsos.unshift({name: 'University Events', filter: null, description: 'University Events'});
 						$scope.rsos.unshift({name: 'All Events', filter: '', description: 'All Events & RSOs'});
+						// Fix bug with showing 'null' for newly created univserities
+						if($scope.rsos[2].id === null) {
+							var index = $scope.rsos.indexOf($scope.rsos[2]);
+							$scope.rsos.splice(index, 1);
+						}
 						$scope.rso.name = $scope.rsos[0]; // set deafult
 						$scope.filteredEvents = filterFilter($scope.events, {rso: $scope.rso.filter}); // loaded! Active filters!
 						// updateMarkers();
